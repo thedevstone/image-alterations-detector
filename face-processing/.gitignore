@@ -17,7 +17,12 @@ config.yaml
 # .Dat
 *.dat
 
+# Models
+*.h5
+
+# Images
 *.png
 *.jpg
 *.jpeg
 *.gif
+
