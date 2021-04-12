@@ -7,9 +7,9 @@ from feature_extraction.utils.conversions import shape_to_np
 
 # wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
 class LandmarkExtractor:
-    def __init__(self):
+    def __init__(self, dat_file):
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+        self.predictor = dlib.shape_predictor(dat_file)
         self.deep_predictor = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D,
                                                            flip_input=False,
                                                            device='cpu')

@@ -16,7 +16,7 @@ def main():
     landmark_extractor = LandmarkExtractor()
     face_extractor = FaceExtractor()
 
-    img = cv2.imread('img.png', cv2.IMREAD_COLOR)
+    img = cv2.imread('img1.png', cv2.IMREAD_COLOR)
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     bbox = face_extractor.get_faces_bbox(img)
