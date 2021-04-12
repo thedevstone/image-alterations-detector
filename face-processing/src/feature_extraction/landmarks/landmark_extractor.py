@@ -26,6 +26,21 @@ class LandmarkExtractor:
         landmarks_2d = shape_to_np(landmarks)
         return landmarks_2d
 
+    def get_2d_landmarks(self, img):
+        """
+        Get 2d dlib's landmarks
+
+        :param img: the image
+        :param rect: the region of extraction
+        :return: a list of landmark parts
+        """
+        face_bbox = self.detector(img)
+        if len(face_bbox) == 0:
+            raise IndexError("No faces found")
+        landmarks = self.predictor(img, face_bbox[0])
+        landmarks_2d = shape_to_np(landmarks)
+        return landmarks_2d
+
     def get_2d_landmarks_dnn(self, img):
         """
         Get 2d neural net landmarks
