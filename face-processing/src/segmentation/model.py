@@ -3,6 +3,11 @@ from tensorflow import keras
 
 
 def load_model(model_path):
+    """ Load the model from path
+
+    :param model_path: the path to the model .h5 file
+    :return: the Keras model
+    """
     dice_loss = sm.losses.DiceLoss()
     jackard_loss = sm.losses.JaccardLoss()
     total_loss = dice_loss + jackard_loss

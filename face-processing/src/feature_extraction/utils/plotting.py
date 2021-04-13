@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 
-def get_images_mosaic(title, images_labels_data, rows, cols):
+def get_images_mosaic(title, images_labels_data, rows, cols) -> plt.Figure:
     """
     Construct an image mosaic from a list of tuples
 
