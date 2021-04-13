@@ -3,6 +3,7 @@ from typing import List, Tuple
 import cv2
 import numpy as np
 
+import face_align.face_aligner as aligner
 import feature_extraction.triangulation.utils as utils
 import measures.triangles_measures as measures
 from feature_extraction.landmarks.utils import get_indexes_group_from_key
@@ -75,6 +76,13 @@ if __name__ == '__main__':
     extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
     points1 = extractor.get_2d_landmarks(img1)
     points2 = extractor.get_2d_landmarks(img2)
+    # Align faces
+    aligner = aligner.FaceAligner(desired_face_width=img1.shape[0])
+    img1 = aligner.align(img1, points1)
+    img2 = aligner.align(img2, points2)
+    # New landmarks
+    points1 = extractor.get_2d_landmarks(img1)
+    points2 = extractor.get_2d_landmarks(img2)
     # Extract indexes from one of the two
     triangles_indexes = get_triangulations_indexes(img1, points1)
     # Subset of features
@@ -101,4 +109,16 @@ if __name__ == '__main__':
     triangles_points2 = utils.triangulation_indexes_to_points(points2, triangles_indexes)
     mean_area1 = measures.compute_mean_triangles_area(triangles_points1)
     mean_area2 = measures.compute_mean_triangles_area(triangles_points2)
-    print(mean_area1, mean_area2)
+    print('Mean areas img1, img2:', mean_area1, mean_area2)
+
+    # Compute matrix
+    triangles_points_nose1 = utils.triangulation_indexes_to_points(points1, triangles_indexes_nose)
+    triangles_points_nose2 = utils.triangulation_indexes_to_points(points2, triangles_indexes_nose)
+
+    matrix = measures.compute_affine_matrix(triangles_points_nose1[0], triangles_points_nose2[0])
+    print('Affine matrix triangle1 -> triangle2:\n', matrix)
+
+    # Compute centroid
+    centroid1 = measures.compute_triangle_centroid(triangles_points_nose1[0])
+    centroid2 = measures.compute_triangle_centroid(triangles_points_nose2[0])
+    print('Centroid triangle1, triangle2:', centroid1, centroid2)
