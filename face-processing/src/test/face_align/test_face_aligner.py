@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from face_align.face_aligner import FaceAligner
 from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
-from feature_extraction.utils.plotting import get_images_mosaic
+from plotting.plotting import get_images_mosaic
 
 if __name__ == '__main__':
     landmark_extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")

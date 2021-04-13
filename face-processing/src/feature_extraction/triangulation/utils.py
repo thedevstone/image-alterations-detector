@@ -6,6 +6,11 @@ import numpy as np
 
 
 def points_to_list_of_tuple(points: np.ndarray) -> List[Tuple[int, int]]:
+    """ Convert a numpy array to a list of tuple 2D
+
+    :param points: the numpy array of 2D points
+    :return: the list of tuple 2D
+    """
     points_list = []
     for i, p in enumerate(points):
         x = points[i][0]
@@ -15,6 +20,12 @@ def points_to_list_of_tuple(points: np.ndarray) -> List[Tuple[int, int]]:
 
 
 def triangulation_indexes_to_points(points: np.ndarray, triangles_indexes: np.ndarray) -> np.ndarray:
+    """ Convert triangles indexes to real points given a numpy array of actual points
+
+    :param points: the numpy array of points
+    :param triangles_indexes: the numpy array of indexes
+    :return: a numpy array of the triangles formed by points present in points array
+    """
     # List of points
     points_list = points_to_list_of_tuple(points)
     triangles = np.zeros((len(triangles_indexes), 6), dtype='int')
@@ -32,6 +43,12 @@ def triangulation_indexes_to_points(points: np.ndarray, triangles_indexes: np.nd
 
 
 def rect_contains(rect, point):
+    """ Check if a point is inside a given rectangle
+
+    :param rect: the rectangle
+    :param point: the point
+    :return: True if the point is inside the rectangle otherwise returns False
+    """
     if point[0] < rect[0]:
         return False
     elif point[1] < rect[1]:
@@ -43,17 +60,22 @@ def rect_contains(rect, point):
     return True
 
 
-def draw_delaunay_from_indexes(img: np.ndarray, points: np.ndarray, triangles_indexes: np.ndarray,
-                               delaunay_color: Tuple[int, int, int]) -> np.ndarray:
+def draw_delaunay_from_triangles(img: np.ndarray, triangles_points: np.ndarray,
+                                 delaunay_color: Tuple[int, int, int]) -> np.ndarray:
+    """ Draw the Delaunay graph triangulation points
+
+    :param img: the image
+    :param triangles_points: the indexes of triangles
+    :param delaunay_color: the drawing color
+    :return: a new image with a drawn triangulation
+    """
     # Get shape of image
     size = img.shape
     r = (0, 0, size[1], size[0])
-    # List of points
-    triangles = triangulation_indexes_to_points(points, triangles_indexes)
     # Output image
     image_out = img.copy()
     # Find points coordinates
-    for t in triangles:
+    for t in triangles_points:
         tri_point1 = (t[0], t[1])
         tri_point2 = (t[2], t[3])
         tri_point3 = (t[4], t[5])

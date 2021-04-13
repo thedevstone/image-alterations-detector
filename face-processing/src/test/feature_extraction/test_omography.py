@@ -6,7 +6,7 @@ from feature_extraction.faces.utils import draw_faces_bounding_boxes
 from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
 from feature_extraction.landmarks.utils import visualize_facial_landmarks_areas, visualize_facial_landmarks_points
 from feature_extraction.omography.omography import apply_homography_from_landmarks
-from feature_extraction.utils.plotting import get_images_mosaic
+from plotting.plotting import get_images_mosaic
 
 if __name__ == '__main__':
     landmark_extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
