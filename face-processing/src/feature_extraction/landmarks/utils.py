@@ -29,6 +29,16 @@ FACIAL_LANDMARKS_5_INDEXES = OrderedDict([
 FACIAL_LANDMARKS_INDEXES = FACIAL_LANDMARKS_68_INDEXES
 
 
+def get_indexes_group_from_key(indexes_group_key: str) -> np.ndarray:
+    """ Get a group of indexes in the form of numpy array
+
+    :param indexes_group_key the key in the FACIAL-LANDMARK dictionary
+    :return: the numpy array of indexes
+    """
+    start, stop = FACIAL_LANDMARKS_68_INDEXES[indexes_group_key]
+    return np.arange(start, stop)
+
+
 def visualize_facial_landmarks_points(img: np.ndarray, landmarks_2d: np.ndarray) -> np.ndarray:
     """ Visualize facial landmark in the form of points
 

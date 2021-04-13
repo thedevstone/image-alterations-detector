@@ -43,8 +43,8 @@ def rect_contains(rect, point):
     return True
 
 
-def draw_delaunay(img: np.ndarray, points: np.ndarray, triangles_indexes: np.ndarray,
-                  delaunay_color: Tuple[int, int, int]) -> np.ndarray:
+def draw_delaunay_from_indexes(img: np.ndarray, points: np.ndarray, triangles_indexes: np.ndarray,
+                               delaunay_color: Tuple[int, int, int]) -> np.ndarray:
     # Get shape of image
     size = img.shape
     r = (0, 0, size[1], size[0])

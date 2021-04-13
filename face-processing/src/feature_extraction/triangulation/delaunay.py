@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 import feature_extraction.triangulation.utils as utils
+from feature_extraction.landmarks.utils import get_indexes_group_from_key
 
 
 def get_triangulations(img: np.ndarray, points: np.ndarray) -> np.ndarray:
@@ -52,6 +53,15 @@ def get_triangulations_indexes(img: np.ndarray, points: np.ndarray) -> np.ndarra
     return triangles_indexes
 
 
+def get_triangulations_indexes_subset(triangles_indexes: np.ndarray, indexes_group: np.ndarray):
+    sub_triangles_indexes = []
+    for t in triangles_indexes:
+        if set(t).issubset(set(indexes_group)):
+            sub_triangles_indexes.append(t)
+    sub_triangles_indexes = np.array(sub_triangles_indexes)
+    return sub_triangles_indexes
+
+
 if __name__ == '__main__':
     from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
 
@@ -60,6 +70,16 @@ if __name__ == '__main__':
     extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
     points = extractor.get_2d_landmarks(img)
     triangles_indexes = get_triangulations_indexes(img, points)
-    image_delaunay = utils.draw_delaunay(img, points, triangles_indexes, (150, 0, 0))
+
+    right_eye_indexes = get_indexes_group_from_key('right_eye')
+    left_eye_indexes = get_indexes_group_from_key('left_eye')
+    nose_indexes = get_indexes_group_from_key('nose')
+
+    triangles_indexes_right_eye = get_triangulations_indexes_subset(triangles_indexes, right_eye_indexes)
+    triangles_indexes_left_eye = get_triangulations_indexes_subset(triangles_indexes, left_eye_indexes)
+    triangles_indexes_nose = get_triangulations_indexes_subset(triangles_indexes, nose_indexes)
+
+    all_indexes = np.row_stack([triangles_indexes_right_eye, triangles_indexes_left_eye, triangles_indexes_nose])
+    image_delaunay = utils.draw_delaunay_from_indexes(img, points, all_indexes, (150, 0, 0))
     plt.imshow(image_delaunay)
     plt.show()
