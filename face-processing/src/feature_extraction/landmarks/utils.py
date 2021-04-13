@@ -29,7 +29,13 @@ FACIAL_LANDMARKS_5_INDEXES = OrderedDict([
 FACIAL_LANDMARKS_INDEXES = FACIAL_LANDMARKS_68_INDEXES
 
 
-def visualize_facial_landmarks_points(img, landmarks_2d):
+def visualize_facial_landmarks_points(img: np.ndarray, landmarks_2d: np.ndarray) -> np.ndarray:
+    """ Visualize facial landmark in the form of points
+
+    :param img: the input image
+    :param landmarks_2d: the landmark array
+    :return: the new image with landmark visualization
+    """
     img_out = np.array(img)
     for n in range(0, 68):
         x = landmarks_2d[n, 0]
@@ -38,9 +44,8 @@ def visualize_facial_landmarks_points(img, landmarks_2d):
     return img_out
 
 
-def visualize_facial_landmarks_areas(image, shape, colors=None, alpha=0.75):
-    """
-    Visualization of facial landmarks.
+def visualize_facial_landmarks_areas(image: np.ndarray, shape: np.ndarray, colors=None, alpha=0.75) -> np.ndarray:
+    """ Visualization of facial landmarks with overlay
 
     :param image: the input image
     :param shape: the input shape

@@ -13,7 +13,9 @@ def denormalize(image: np.ndarray) -> np.ndarray:
     return (image * 255.).astype('uint8')
 
 
-def mask_channels_to_rgb(image: np.ndarray, n_classes: int, image_size: int,
+def mask_channels_to_rgb(image: np.ndarray,
+                         n_classes: int,
+                         image_size: int,
                          colors_values_list: List[np.ndarray]) -> np.ndarray:
     """ Convert denormalized image 'uint8' [0,255] to RGB image [0,255]
 

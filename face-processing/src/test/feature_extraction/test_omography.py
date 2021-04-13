@@ -9,7 +9,7 @@ from feature_extraction.omography.omography import apply_homography_from_landmar
 from feature_extraction.utils.plotting import get_images_mosaic
 
 if __name__ == '__main__':
-    landmark_extractor = LandmarkExtractor("../../shape_predictor_68_face_landmarks.dat")
+    landmark_extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
     face_extractor = FaceExtractor()
     # Images
     img1 = cv2.imread('../../../images/img1.jpg', cv2.IMREAD_COLOR)
@@ -19,8 +19,8 @@ if __name__ == '__main__':
     # Bbox and landmarks
     bbox_1 = face_extractor.get_faces_bbox(img1)
     bbox_2 = face_extractor.get_faces_bbox(img2)
-    landmarks_1 = landmark_extractor.get_2d_landmarks(img1, bbox_1[0])
-    landmarks_2 = landmark_extractor.get_2d_landmarks(img2, bbox_2[0])
+    landmarks_1 = landmark_extractor.get_2d_landmarks(img1)
+    landmarks_2 = landmark_extractor.get_2d_landmarks(img2)
     # landmarks_dnn = landmark_extractor.get_2d_landmarks_dnn(img)
     # Homography
     img1_aligned = apply_homography_from_landmarks(img1, img2, landmarks_1, landmarks_2)

@@ -19,7 +19,7 @@ class FaceAligner:
         if self.desired_face_height is None:
             self.desired_face_height = self.desired_face_width
 
-    def align(self, image, shape):
+    def align(self, image: np.ndarray, shape: np.ndarray) -> np.ndarray:
         """ Align image
 
         :param image: the image

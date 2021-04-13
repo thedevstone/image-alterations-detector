@@ -1,5 +1,5 @@
 from itertools import compress
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,7 +16,7 @@ CLASS_TO_SEGMENTATION_COLOR = {'skin': 'blue', 'nose': 'green', 'eye': 'violet',
                                'hair': 'orange', 'neck': 'light_blue', 'cloth': 'purple'}
 
 
-def get_classes_colors(classes_to_segment) -> Tuple[List[str], List[np.ndarray]]:
+def get_classes_colors(classes_to_segment: Dict[str, bool]) -> Tuple[List[str], List[np.ndarray]]:
     """ Get a configuration of classes to segment and return the corresponding colors
 
     :param classes_to_segment: the classes configuration
@@ -30,7 +30,7 @@ def get_classes_colors(classes_to_segment) -> Tuple[List[str], List[np.ndarray]]
     return classes_list, colors_values_list
 
 
-def visualize_color_configuration(classes_to_segment) -> plt.Figure:
+def visualize_color_configuration(classes_to_segment: Dict[str, bool]) -> plt.Figure:
     """ Visualize color configuration
 
     :param classes_to_segment: the classes configuration

@@ -1,9 +1,10 @@
 import cv2
+import numpy as np
 
 
-def apply_homography_from_landmarks(img_source, img_dest, points_source, points_dest):
-    """
-    Compute homography between the two list of points and apply the homography to first image
+def apply_homography_from_landmarks(img_source: np.ndarray, img_dest: np.ndarray, points_source: np.ndarray,
+                                    points_dest: np.ndarray) -> np.ndarray:
+    """ Compute homography between the two list of points and apply the homography to first image
 
     :param img_source: source image
     :param img_dest: destination image
