@@ -6,7 +6,6 @@ import numpy as np
 import face_align.face_aligner as aligner
 import feature_extraction.triangulation.utils as utils
 import measures.triangles_measures as measures
-from feature_extraction.landmarks.utils import get_indexes_group_from_key
 from plotting.plotting import get_images_mosaic
 
 
@@ -68,57 +67,61 @@ if __name__ == '__main__':
     from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
 
     # Load images
-    img1 = cv2.imread('../../../images/img1.jpg')
-    img2 = cv2.imread('../../../images/img2.jpg')
+    img1 = cv2.imread('../../../images/m-004-1.png')
+    img2 = cv2.imread('../../../images/m-004-14.png')
+    img_beauty = cv2.imread('../../../images/m-004-a.jpg')
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
+    img_beauty = cv2.cvtColor(img_beauty, cv2.COLOR_BGR2RGB)
     # Extract landmark indexes
     extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
     points1 = extractor.get_2d_landmarks(img1)
     points2 = extractor.get_2d_landmarks(img2)
+    points3 = extractor.get_2d_landmarks(img_beauty)
     # Align faces
     aligner = aligner.FaceAligner(desired_face_width=img1.shape[0])
     img1 = aligner.align(img1, points1)
     img2 = aligner.align(img2, points2)
+    img_beauty = aligner.align(img_beauty, points3)
     # New landmarks
     points1 = extractor.get_2d_landmarks(img1)
     points2 = extractor.get_2d_landmarks(img2)
+    points3 = extractor.get_2d_landmarks(img_beauty)
     # Extract indexes from one of the two
     triangles_indexes = get_triangulations_indexes(img1, points1)
-    # Subset of features
-    right_eye_indexes = get_indexes_group_from_key('right_eye')
-    left_eye_indexes = get_indexes_group_from_key('left_eye')
-    nose_indexes = get_indexes_group_from_key('nose')
-    triangles_indexes_right_eye = get_triangulations_indexes_subset(triangles_indexes, right_eye_indexes)
-    triangles_indexes_left_eye = get_triangulations_indexes_subset(triangles_indexes, left_eye_indexes)
-    triangles_indexes_nose = get_triangulations_indexes_subset(triangles_indexes, nose_indexes)
-    indexes_group_union = np.row_stack([triangles_indexes_right_eye,
-                                        triangles_indexes_left_eye,
-                                        triangles_indexes_nose])
+    triangles_points1 = utils.triangulation_indexes_to_points(points1, triangles_indexes)
+    triangles_points2 = utils.triangulation_indexes_to_points(points2, triangles_indexes)
+    triangles_points3 = utils.triangulation_indexes_to_points(points3, triangles_indexes)
     # Draw Delaunay
-    triangles_group_union_points1 = utils.triangulation_indexes_to_points(points1, indexes_group_union)
-    triangles_group_union_points2 = utils.triangulation_indexes_to_points(points2, indexes_group_union)
-    image_delaunay1 = utils.draw_delaunay_from_triangles(img1, triangles_group_union_points1, (150, 0, 0))
-    image_delaunay2 = utils.draw_delaunay_from_triangles(img2, triangles_group_union_points2, (150, 0, 0))
-    images = [(image_delaunay1, 'Delaunay 1'), (image_delaunay2, 'Delaunay 2')]
-    mosaic = get_images_mosaic('Delaunay', images, 1, 2)
+    image_delaunay1 = utils.draw_delaunay_from_triangles(img1, triangles_points1, (150, 0, 0))
+    image_delaunay2 = utils.draw_delaunay_from_triangles(img2, triangles_points2, (150, 0, 0))
+    image_delaunay3 = utils.draw_delaunay_from_triangles(img_beauty, triangles_points3, (150, 0, 0))
+    images = [(image_delaunay1, 'Delaunay controlled'),
+              (image_delaunay2, 'Delaunay genuine'),
+              (image_delaunay3, 'Delaunay beautified')]
+    mosaic = get_images_mosaic('Delaunay', images, 1, 3)
     mosaic.show()
 
     # Compute area
-    triangles_points1 = utils.triangulation_indexes_to_points(points1, triangles_indexes)
-    triangles_points2 = utils.triangulation_indexes_to_points(points2, triangles_indexes)
-    mean_area1 = measures.compute_mean_triangles_area(triangles_points1)
-    mean_area2 = measures.compute_mean_triangles_area(triangles_points2)
-    print('Mean areas img1, img2:', mean_area1, mean_area2)
-
-    # Compute matrix
-    triangles_points_nose1 = utils.triangulation_indexes_to_points(points1, triangles_indexes_nose)
-    triangles_points_nose2 = utils.triangulation_indexes_to_points(points2, triangles_indexes_nose)
-
-    matrix = measures.compute_affine_matrix(triangles_points_nose1[0], triangles_points_nose2[0])
-    print('Affine matrix triangle1 -> triangle2:\n', matrix)
+    mean_area_difference12 = measures.compute_mean_triangles_area(triangles_points1, triangles_points2)
+    mean_area_difference13 = measures.compute_mean_triangles_area(triangles_points1, triangles_points3)
+    print('Mean areas difference ctrl-genuine:', mean_area_difference12)
+    print('Mean areas difference ctrl-beauty:', mean_area_difference13)
 
     # Compute centroid
-    centroid1 = measures.compute_triangle_centroid(triangles_points_nose1[0])
-    centroid2 = measures.compute_triangle_centroid(triangles_points_nose2[0])
-    print('Centroid triangle1, triangle2:', centroid1, centroid2)
+    centroid_distances12 = measures.compute_mean_centroids_distances(triangles_points1, triangles_points2)
+    centroid_distances13 = measures.compute_mean_centroids_distances(triangles_points1, triangles_points3)
+    print('Centroid distances ctrl-genuine:', centroid_distances12)
+    print('Centroid distances ctrl-beauty:', centroid_distances13)
+
+    # Compute cosine similarity
+    angles_distances12 = measures.compute_mean_angles_distances(triangles_points1, triangles_points2)
+    angles_distances13 = measures.compute_mean_angles_distances(triangles_points1, triangles_points3)
+    print('Angles cosine distances ctrl-genuine:', angles_distances12)
+    print('Angles cosine distances ctrl-beauty:', angles_distances13)
+
+    # Compute matrix
+    affine_matrices_distances = measures.compute_mean_affine_matrices_distances(triangles_points1,
+                                                                                triangles_points2,
+                                                                                triangles_points3)
+    print('Affine matrix distances:', affine_matrices_distances)

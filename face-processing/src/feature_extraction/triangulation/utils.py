@@ -5,6 +5,17 @@ import cv2
 import numpy as np
 
 
+def unpack_triangle_coordinates(triangle_points: np.ndarray) -> \
+        Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]:
+    x1, y1 = triangle_points[0], triangle_points[1]
+    x2, y2 = triangle_points[2], triangle_points[3]
+    x3, y3 = triangle_points[4], triangle_points[5]
+    p1 = (x1, y1)
+    p2 = (x2, y2)
+    p3 = (x3, y3)
+    return p1, p2, p3
+
+
 def points_to_list_of_tuple(points: np.ndarray) -> List[Tuple[int, int]]:
     """ Convert a numpy array to a list of tuple 2D
 
