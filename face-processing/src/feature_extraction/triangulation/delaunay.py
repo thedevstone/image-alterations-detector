@@ -6,7 +6,7 @@ import numpy as np
 import face_align.face_aligner as aligner
 import feature_extraction.triangulation.utils as utils
 import measures.triangles_measures as measures
-from plotting.plotting import get_images_mosaic
+from plotting.plotting import get_images_mosaic_with_label
 
 
 def get_triangulations(img: np.ndarray, points: np.ndarray) -> np.ndarray:
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     images = [(image_delaunay1, 'Delaunay controlled'),
               (image_delaunay2, 'Delaunay genuine'),
               (image_delaunay3, 'Delaunay beautified')]
-    mosaic = get_images_mosaic('Delaunay', images, 1, 3)
+    mosaic = get_images_mosaic_with_label('Delaunay', images, 1, 3)
     mosaic.show()
 
     # Compute area

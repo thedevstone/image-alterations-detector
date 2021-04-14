@@ -6,7 +6,7 @@ from feature_extraction.faces.utils import draw_faces_bounding_boxes
 from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
 from feature_extraction.landmarks.utils import visualize_facial_landmarks_areas, visualize_facial_landmarks_points
 from feature_extraction.omography.omography import apply_homography_from_landmarks
-from plotting.plotting import get_images_mosaic
+from plotting.plotting import get_images_mosaic_with_label
 
 if __name__ == '__main__':
     landmark_extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
@@ -36,5 +36,5 @@ if __name__ == '__main__':
                       (img1_with_landmarks_area, "Landmarks area 1"),
                       (img1_aligned, "Aligned 1"),
                       (overlay, "Overlay")]
-    mosaic = get_images_mosaic("Homography", images_to_show, rows=2, cols=4)
+    mosaic = get_images_mosaic_with_label("Homography", images_to_show, rows=2, cols=4)
     plt.show()
