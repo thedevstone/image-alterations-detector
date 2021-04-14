@@ -2,6 +2,8 @@ import os
 
 import cv2
 
+from plotting.plotting import get_images_mosaic_no_labels
+
 
 def load_altered_dataset(path_to_dataset):
     def exists(path):
@@ -9,8 +11,12 @@ def load_altered_dataset(path_to_dataset):
 
     def load_image(path):
         img = cv2.imread(path, cv2.IMREAD_COLOR)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        return img
+        img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+        # equalize the histogram of the Y channel
+        img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
+        # convert the YUV image back to RGB format
+        img_output = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2RGB)
+        return img_output
 
     genuine_dir = os.path.join(path_to_dataset, 'Genuine')
     beautified_dir = os.path.join(path_to_dataset, 'Beautified')
@@ -38,4 +44,7 @@ def load_altered_dataset(path_to_dataset):
                 beauty_b.append(load_image(image_beauty_b_path))
                 beauty_c.append(load_image(image_beauty_c_path))
 
+    images_to_show = [genuine_1[0], genuine_5[0], genuine_14[0], beauty_a[0], beauty_b[0], beauty_c[0]]
+    mosaic = get_images_mosaic_no_labels('Dataset', images_to_show, 2, 3)
+    mosaic.show()
     return (genuine_1, genuine_5, genuine_14), (beauty_a, beauty_b, beauty_c)
