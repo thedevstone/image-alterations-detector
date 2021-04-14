@@ -26,14 +26,14 @@ def compute_triangle_area(triangle_points: np.ndarray) -> float:
     return area
 
 
-def compute_mean_triangles_area(source_triangles_points: np.ndarray, dest_triangles_points: np.ndarray) -> float:
+def compute_mean_triangles_area(source_triangles_points: np.ndarray, dest_triangles_points: np.ndarray) -> np.ndarray:
     """ Compute the mean area between all triangles
 
     :param source_triangles_points: numpy source array of triangles
     :param dest_triangles_points: numpy dest array of triangles
     :return: the mean area rounded to second decimal
     """
-    area_differences: float = 0
+    area_differences = []
     source_triangle_number = len(source_triangles_points)
     dest_triangle_number = len(dest_triangles_points)
     if source_triangle_number != dest_triangle_number:
@@ -41,9 +41,8 @@ def compute_mean_triangles_area(source_triangles_points: np.ndarray, dest_triang
     for t1, t2 in zip(source_triangles_points, dest_triangles_points):
         source_area = compute_triangle_area(t1)
         dest_area = compute_triangle_area(t2)
-        area_differences += abs(source_area - dest_area)
-    mean_area = area_differences / source_triangle_number
-    return round(mean_area, 2)
+        area_differences.append(abs(source_area - dest_area))
+    return np.array(area_differences)
 
 
 def compute_triangle_centroid(triangle_points: np.ndarray) -> Tuple[float, float]:
@@ -65,7 +64,7 @@ def compute_mean_centroids_distances(source_triangles_points: np.ndarray, dest_t
         :param dest_triangles_points: numpy dest array of triangles
         :return: the mean centroids distances rounded to second decimal
         """
-    centroid_distances: float = 0
+    centroid_distances = []
     source_triangle_number = len(source_triangles_points)
     dest_triangle_number = len(dest_triangles_points)
     if source_triangle_number != dest_triangle_number:
@@ -74,9 +73,8 @@ def compute_mean_centroids_distances(source_triangles_points: np.ndarray, dest_t
         (c1_x, c1_y) = compute_triangle_centroid(t1)
         (c2_x, c2_y) = compute_triangle_centroid(t2)
         dist = sqrt((c2_x - c1_x) ** 2 + (c2_y - c1_y) ** 2)
-        centroid_distances += dist
-    mean_centroid_distances = centroid_distances / source_triangle_number
-    return round(mean_centroid_distances, 2)
+        centroid_distances.append(dist)
+    return np.array(centroid_distances)
 
 
 def compute_triangle_angles(triangle_points: np.ndarray) -> np.ndarray:
@@ -103,7 +101,7 @@ def compute_mean_angles_distances(source_triangles_points: np.ndarray, dest_tria
         :param dest_triangles_points: numpy dest array of triangles
         :return: the mean angles distances rounded to second decimal
         """
-    cosine_distances: float = 0
+    cosine_distances = []
     source_triangle_number = len(source_triangles_points)
     dest_triangle_number = len(dest_triangles_points)
     if source_triangle_number != dest_triangle_number:
@@ -113,9 +111,8 @@ def compute_mean_angles_distances(source_triangles_points: np.ndarray, dest_tria
         tri_angles2 = compute_triangle_angles(t2)
         similarity = cosine_similarity([tri_angles1], [tri_angles2])[0][0]
         cosine_distance = 1 - similarity
-        cosine_distances += cosine_distance
-    mean_cosine_distances = cosine_distances / source_triangle_number
-    return round(mean_cosine_distances, 2)
+        cosine_distances.append(cosine_distance)
+    return np.array(cosine_distances)
 
 
 def compute_affine_matrix(source_triangle_points: np.ndarray, dest_triangle_points: np.ndarray) -> np.ndarray:
@@ -133,9 +130,7 @@ def compute_affine_matrix(source_triangle_points: np.ndarray, dest_triangle_poin
 
 
 def compute_mean_affine_matrices_distances(source1_triangles_points: np.ndarray,
-                                           source2_triangles_points: np.ndarray,
-                                           target_triangles_points: np.ndarray
-                                           ):
+                                           source2_triangles_points: np.ndarray):
     """ Compute the mean affine matrices distances between source1, source2, target
 
     :param source1_triangles_points: numpy source1 array of triangles
@@ -143,16 +138,12 @@ def compute_mean_affine_matrices_distances(source1_triangles_points: np.ndarray,
     :param target_triangles_points: numpy target array of triangles
     :return: the mean affine matrices distances rounded to second decimal
     """
-    matrices_distances: float = 0
+    matrices_distances = []
     source1_triangle_number = len(source1_triangles_points)
     source2_triangle_number = len(source2_triangles_points)
-    target_triangle_number = len(target_triangles_points)
-    if (source1_triangle_number != source2_triangle_number) and (source2_triangle_number != target_triangle_number):
+    if source1_triangle_number != source2_triangle_number:
         raise AssertionError('Images have different number of triangles')
-    for t1, t2, t_target in zip(source1_triangles_points, source2_triangles_points, target_triangles_points):
-        affine_matrix_1 = compute_affine_matrix(t1, t_target)
-        affine_matrix_2 = compute_affine_matrix(t2, t_target)
-        distance = np.linalg.norm(affine_matrix_1 - affine_matrix_2)
-        matrices_distances += distance
-    mean_matrices_distances = matrices_distances / source1_triangle_number
-    return round(mean_matrices_distances, 2)
+    for t1, t2 in zip(source1_triangles_points, source2_triangles_points):
+        affine_matrix_1 = compute_affine_matrix(t1, t2)
+        matrices_distances.append(affine_matrix_1.flatten())
+    return np.array(matrices_distances).flatten()
