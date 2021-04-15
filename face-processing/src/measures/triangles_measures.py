@@ -7,10 +7,10 @@ import dlib
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-import feature_extraction.triangulation.utils as tri_utils
-from feature_extraction.faces.face_extractor import FaceExtractor
+import feature_extraction.triangulation.conversions as tri_utils
+from feature_extraction.faces.face_detector import FaceDetector
 from feature_extraction.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
-from feature_extraction.utils.conversions import rect_to_bb
+from feature_extraction.utils.conversions import rect_to_bounding_box
 
 
 def compute_triangle_area(triangle_points: np.ndarray) -> float:
@@ -155,12 +155,12 @@ def compute_mean_affine_matrices_distances(source1_triangles_points: np.ndarray,
     return np.array(matrices_distances).flatten()
 
 
-def compute_face_lbp_difference(source_img: np.ndarray, dest_img: np.ndarray, detector: FaceExtractor,
+def compute_face_lbp_difference(source_img: np.ndarray, dest_img: np.ndarray, detector: FaceDetector,
                                 lpb_extractor: LocalBinaryPattern):
     bbox_source: dlib.rectangle = detector.get_faces_bbox(source_img)[0]
     bbox_dest: dlib.rectangle = detector.get_faces_bbox(dest_img)[0]
-    (x1, y1, w1, h1) = rect_to_bb(bbox_source)
-    (x2, y2, w2, h2) = rect_to_bb(bbox_dest)
+    (x1, y1, w1, h1) = rect_to_bounding_box(bbox_source)
+    (x2, y2, w2, h2) = rect_to_bounding_box(bbox_dest)
     source_img_crop = source_img.copy()[y1:y1 + h1, x1:x1 + w1]
     dest_img_crop = dest_img.copy()[y2:y2 + h2, x2:x2 + w2]
     source_img_crop = cv2.cvtColor(source_img_crop, cv2.COLOR_RGB2GRAY)

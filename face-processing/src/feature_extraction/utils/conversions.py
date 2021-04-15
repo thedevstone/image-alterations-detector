@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def shape_to_np(shape, dtype="int"):
+def landmarks_to_array(shape, dtype="int"):
     """
     Convert dlib landmark notation to numpy array of tuple
 
@@ -17,7 +17,7 @@ def shape_to_np(shape, dtype="int"):
     return coords
 
 
-def rect_to_bb(rect):
+def rect_to_bounding_box(rect):
     """
     Take a bounding predicted by dlib and convert it to the format (x, y, w, h) as we would normally do with OpenCV
 

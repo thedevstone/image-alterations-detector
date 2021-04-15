@@ -10,10 +10,10 @@ from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization
 
 from dataset.dataset_utils import load_altered_dataset
 from face_align.face_aligner import FaceAligner
-from feature_extraction.faces.face_extractor import FaceExtractor
-from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
+from feature_extraction.faces.face_detector import FaceDetector
+from feature_extraction.landmarks.landmark_predictor import LandmarkPredictor
 from feature_extraction.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
-from feature_extraction.triangulation import utils
+from feature_extraction.triangulation import conversions
 from feature_extraction.triangulation.delaunay import get_triangulations_indexes
 from measures.triangles_measures import compute_mean_triangles_area, compute_mean_centroids_distances, \
     compute_mean_angles_distances, compute_mean_affine_matrices_distances, compute_face_lbp_difference
@@ -31,8 +31,8 @@ if __name__ == '__main__':
     genuine, altered = load_altered_dataset(dataset_path)
     genuine_1, genuine_5, genuine_14 = genuine
     beauty_a, beauty_b, beauty_c = altered
-    extractor = LandmarkExtractor("../../models/shape_predictor_68_face_landmarks.dat")
-    detector = FaceExtractor()
+    extractor = LandmarkPredictor("../../models/shape_predictor_68_face_landmarks.dat")
+    detector = FaceDetector()
     lbp = LocalBinaryPattern(24, 8)
     aligner = FaceAligner(desired_face_width=genuine_1[0].shape[0])
     # Extract indexes from one of the two
@@ -68,12 +68,13 @@ if __name__ == '__main__':
         img_beauty_c_points = extractor.get_2d_landmarks(img_beauty_c)
 
         # Extract indexes from one of the two
-        img_genuine_1_tri_points = utils.triangulation_indexes_to_points(img_genuine_1_points, triangles_indexes)
-        img_genuine_5_tri_points = utils.triangulation_indexes_to_points(img_genuine_5_points, triangles_indexes)
-        img_genuine_14_tri_points = utils.triangulation_indexes_to_points(img_genuine_14_points, triangles_indexes)
-        img_beauty_a_tri_points = utils.triangulation_indexes_to_points(img_beauty_a_points, triangles_indexes)
-        img_beauty_b_tri_points = utils.triangulation_indexes_to_points(img_beauty_b_points, triangles_indexes)
-        img_beauty_c_tri_points = utils.triangulation_indexes_to_points(img_beauty_c_points, triangles_indexes)
+        img_genuine_1_tri_points = conversions.triangulation_indexes_to_points(img_genuine_1_points, triangles_indexes)
+        img_genuine_5_tri_points = conversions.triangulation_indexes_to_points(img_genuine_5_points, triangles_indexes)
+        img_genuine_14_tri_points = conversions.triangulation_indexes_to_points(img_genuine_14_points,
+                                                                                triangles_indexes)
+        img_beauty_a_tri_points = conversions.triangulation_indexes_to_points(img_beauty_a_points, triangles_indexes)
+        img_beauty_b_tri_points = conversions.triangulation_indexes_to_points(img_beauty_b_points, triangles_indexes)
+        img_beauty_c_tri_points = conversions.triangulation_indexes_to_points(img_beauty_c_points, triangles_indexes)
 
         # Compute area
         mean_area_difference1_14 = compute_mean_triangles_area(img_genuine_1_tri_points, img_genuine_14_tri_points)

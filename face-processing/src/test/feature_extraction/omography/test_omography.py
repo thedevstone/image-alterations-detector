@@ -1,16 +1,16 @@
 import cv2
-import matplotlib.pyplot as plt
 
-from feature_extraction.faces.face_extractor import FaceExtractor
+from feature_extraction.faces.face_detector import FaceDetector
 from feature_extraction.faces.utils import draw_faces_bounding_boxes
-from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
+from feature_extraction.landmarks.landmark_predictor import LandmarkPredictor
 from feature_extraction.landmarks.utils import visualize_facial_landmarks_areas, visualize_facial_landmarks_points
 from feature_extraction.omography.omography import apply_homography_from_landmarks
 from plotting.plotting import get_images_mosaic_with_label
 
-if __name__ == '__main__':
-    landmark_extractor = LandmarkExtractor("../../../models/shape_predictor_68_face_landmarks.dat")
-    face_extractor = FaceExtractor()
+
+def main():
+    landmark_extractor = LandmarkPredictor("../../../models/shape_predictor_68_face_landmarks.dat")
+    face_extractor = FaceDetector()
     # Images
     img1 = cv2.imread('../../../images/img1.jpg', cv2.IMREAD_COLOR)
     img2 = cv2.imread('../../../images/img2.jpg', cv2.IMREAD_COLOR)
@@ -29,6 +29,7 @@ if __name__ == '__main__':
     img1_with_landmarks_area = visualize_facial_landmarks_areas(img1, landmarks_1)
     img1_with_landmarks_points = visualize_facial_landmarks_points(img1, landmarks_1)
     overlay = cv2.addWeighted(img1_aligned, 0.7, img2, 0.7, 0)
+    # Prepare mosaic
     images_to_show = [(img1, "Img 1"),
                       (img2, "Img 2"),
                       (img1_with_bbox, "Bbox 1"),
@@ -37,4 +38,8 @@ if __name__ == '__main__':
                       (img1_aligned, "Aligned 1"),
                       (overlay, "Overlay")]
     mosaic = get_images_mosaic_with_label("Homography", images_to_show, rows=2, cols=4)
-    plt.show()
+    mosaic.show()
+
+
+if __name__ == '__main__':
+    main()
