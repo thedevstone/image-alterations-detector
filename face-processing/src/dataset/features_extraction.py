@@ -151,12 +151,12 @@ if __name__ == '__main__':
     dataset = np.column_stack([mean_area, matrices])
     labels = np.array(labels)
 
-    print(mean_area.shape, centroids.shape, angles.shape, matrices.shape)
+    print(mean_area.shape, centroids.shape, angles.shape, matrices.shape, lbps.shape)
 
-    x_train_mean_area, x_test_mean_area, y_train_mean_area, y_test_mean_area = train_test_split(mean_area, labels,
+    x_train_mean_area, x_test_mean_area, y_train_mean_area, y_test_mean_area = train_test_split(lbps, labels,
                                                                                                 test_size=0.2,
                                                                                                 random_state=23)
-    x_train_matrices, x_test_matrices, y_train_matrices, y_test_matrices = train_test_split(lbps, labels,
+    x_train_matrices, x_test_matrices, y_train_matrices, y_test_matrices = train_test_split(matrices, labels,
                                                                                             test_size=0.2,
                                                                                             random_state=23)
 
@@ -186,11 +186,11 @@ if __name__ == '__main__':
     print("\nFINAL EVALUATION")
     mean_area_matrices_predicted = np.column_stack((predicted_mean_area, predicted_matrices))
     mean_area_matrices_predicted = stats.mode(mean_area_matrices_predicted, axis=1)[0]
-    print("\nFINAL CNN/Neural/LBP accuracy score:", accuracy_score(y_test_mean_area, mean_area_matrices_predicted))
+    print("\nMulti classifier accuracy score:", accuracy_score(y_test_mean_area, mean_area_matrices_predicted))
 
     print("Testing keras")
     # Configuration options
-    feature_vector_length = 742
+    feature_vector_length = 678
     # y_train = to_categorical(y_train_matrices, 1)
     # y_test = to_categorical(y_test_matrices, 1)
     # Set the input shape
@@ -216,4 +216,4 @@ if __name__ == '__main__':
     model.fit(x_train_matrices, y_train_matrices, epochs=200, batch_size=128, verbose=1, validation_split=0.2)
     # Test the model after training
     test_results = model.evaluate(x_test_matrices, y_test_matrices, verbose=1)
-    print(f'Test results - Loss: {test_results[0]} - Accuracy: {test_results[1]}%')
+    print(f'Test results - Loss: {test_results[0]} - Accuracy: {test_results[1]}')

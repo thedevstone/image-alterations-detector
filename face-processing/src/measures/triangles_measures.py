@@ -26,11 +26,10 @@ def compute_triangle_area(triangle_points: np.ndarray) -> float:
     l3 = sqrt((x3 - x1) ** 2 + (y3 - y1) ** 2)
     # Heron's Formula
     semi_perimeter = (l1 + l2 + l3) / 2
-    try:
-        area = sqrt(semi_perimeter * (semi_perimeter - l1) * (semi_perimeter - l2) * (semi_perimeter - l3))
-        return area
-    except ValueError:
-        print(l1, l2, l3)
+    to_sqrt = semi_perimeter * (semi_perimeter - l1) * (semi_perimeter - l2) * (semi_perimeter - l3)
+    to_sqrt = to_sqrt if to_sqrt > 0 else 0
+    area = sqrt(to_sqrt)
+    return area
 
 
 def compute_mean_triangles_area(source_triangles_points: np.ndarray, dest_triangles_points: np.ndarray) -> np.ndarray:
