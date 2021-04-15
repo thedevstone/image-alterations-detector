@@ -10,11 +10,13 @@ from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization
 
 from dataset.dataset_utils import load_altered_dataset
 from face_align.face_aligner import FaceAligner
+from feature_extraction.faces.face_extractor import FaceExtractor
 from feature_extraction.landmarks.landmark_extractor import LandmarkExtractor
+from feature_extraction.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
 from feature_extraction.triangulation import utils
 from feature_extraction.triangulation.delaunay import get_triangulations_indexes
 from measures.triangles_measures import compute_mean_triangles_area, compute_mean_centroids_distances, \
-    compute_mean_angles_distances, compute_mean_affine_matrices_distances
+    compute_mean_angles_distances, compute_mean_affine_matrices_distances, compute_face_lbp_difference
 
 if __name__ == '__main__':
     dataset_path = '/Users/luca/Desktop/altered'
@@ -22,6 +24,7 @@ if __name__ == '__main__':
     centroids = []
     angles = []
     matrices = []
+    lbps = []
 
     dataset = []
     labels = []
@@ -29,6 +32,8 @@ if __name__ == '__main__':
     genuine_1, genuine_5, genuine_14 = genuine
     beauty_a, beauty_b, beauty_c = altered
     extractor = LandmarkExtractor("../../models/shape_predictor_68_face_landmarks.dat")
+    detector = FaceExtractor()
+    lbp = LocalBinaryPattern(24, 8)
     aligner = FaceAligner(desired_face_width=genuine_1[0].shape[0])
     # Extract indexes from one of the two
     points = extractor.get_2d_landmarks(genuine_1[0])
@@ -61,6 +66,7 @@ if __name__ == '__main__':
         img_beauty_a_points = extractor.get_2d_landmarks(img_beauty_a)
         img_beauty_b_points = extractor.get_2d_landmarks(img_beauty_b)
         img_beauty_c_points = extractor.get_2d_landmarks(img_beauty_c)
+
         # Extract indexes from one of the two
         img_genuine_1_tri_points = utils.triangulation_indexes_to_points(img_genuine_1_points, triangles_indexes)
         img_genuine_5_tri_points = utils.triangulation_indexes_to_points(img_genuine_5_points, triangles_indexes)
@@ -118,18 +124,29 @@ if __name__ == '__main__':
              affine_matrices_distances1_b,
              affine_matrices_distances1_c])
 
+        # LBP
+        lbp_features1_14 = compute_face_lbp_difference(img_genuine_1, img_genuine_14, detector, lbp)
+        lbp_features1_5 = compute_face_lbp_difference(img_genuine_1, img_genuine_5, detector, lbp)
+        lbp_features1_a = compute_face_lbp_difference(img_genuine_1, img_beauty_a, detector, lbp)
+        lbp_features1_b = compute_face_lbp_difference(img_genuine_1, img_beauty_b, detector, lbp)
+        lbp_features1_c = compute_face_lbp_difference(img_genuine_1, img_beauty_c, detector, lbp)
+
+        lbps.extend([lbp_features1_14, lbp_features1_5, lbp_features1_a, lbp_features1_b, lbp_features1_c])
+
         labels.extend([0, 0, 1, 1, 1])
 
     mean_area = np.array(mean_area).astype('float32')
     centroids = np.array(centroids).astype('float32')
     angles = np.array(angles).astype('float32')
     matrices = np.array(matrices).astype('float32')
+    lbps = np.array(lbps).astype('float32')
 
     # Normalize
     mean_area = normalize(mean_area, norm='max')
     centroids = normalize(centroids, norm='max')
     angles = normalize(angles, norm='max')
     matrices = normalize(matrices, norm='max')
+    # lbps = normalize(lbps, norm='max')
 
     dataset = np.column_stack([mean_area, matrices])
     labels = np.array(labels)
@@ -139,7 +156,7 @@ if __name__ == '__main__':
     x_train_mean_area, x_test_mean_area, y_train_mean_area, y_test_mean_area = train_test_split(mean_area, labels,
                                                                                                 test_size=0.2,
                                                                                                 random_state=23)
-    x_train_matrices, x_test_matrices, y_train_matrices, y_test_matrices = train_test_split(matrices, labels,
+    x_train_matrices, x_test_matrices, y_train_matrices, y_test_matrices = train_test_split(lbps, labels,
                                                                                             test_size=0.2,
                                                                                             random_state=23)
 

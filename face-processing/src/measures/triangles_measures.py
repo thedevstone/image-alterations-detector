@@ -3,10 +3,14 @@ from math import sqrt
 from typing import Tuple
 
 import cv2
+import dlib
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 import feature_extraction.triangulation.utils as tri_utils
+from feature_extraction.faces.face_extractor import FaceExtractor
+from feature_extraction.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
+from feature_extraction.utils.conversions import rect_to_bb
 
 
 def compute_triangle_area(triangle_points: np.ndarray) -> float:
@@ -22,8 +26,11 @@ def compute_triangle_area(triangle_points: np.ndarray) -> float:
     l3 = sqrt((x3 - x1) ** 2 + (y3 - y1) ** 2)
     # Heron's Formula
     semi_perimeter = (l1 + l2 + l3) / 2
-    area = sqrt(semi_perimeter * (semi_perimeter - l1) * (semi_perimeter - l2) * (semi_perimeter - l3))
-    return area
+    try:
+        area = sqrt(semi_perimeter * (semi_perimeter - l1) * (semi_perimeter - l2) * (semi_perimeter - l3))
+        return area
+    except ValueError:
+        print(l1, l2, l3)
 
 
 def compute_mean_triangles_area(source_triangles_points: np.ndarray, dest_triangles_points: np.ndarray) -> np.ndarray:
@@ -147,3 +154,20 @@ def compute_mean_affine_matrices_distances(source1_triangles_points: np.ndarray,
         affine_matrix_1 = compute_affine_matrix(t1, t2)
         matrices_distances.append(affine_matrix_1.flatten())
     return np.array(matrices_distances).flatten()
+
+
+def compute_face_lbp_difference(source_img: np.ndarray, dest_img: np.ndarray, detector: FaceExtractor,
+                                lpb_extractor: LocalBinaryPattern):
+    bbox_source: dlib.rectangle = detector.get_faces_bbox(source_img)[0]
+    bbox_dest: dlib.rectangle = detector.get_faces_bbox(dest_img)[0]
+    (x1, y1, w1, h1) = rect_to_bb(bbox_source)
+    (x2, y2, w2, h2) = rect_to_bb(bbox_dest)
+    source_img_crop = source_img.copy()[y1:y1 + h1, x1:x1 + w1]
+    dest_img_crop = dest_img.copy()[y2:y2 + h2, x2:x2 + w2]
+    source_img_crop = cv2.cvtColor(source_img_crop, cv2.COLOR_RGB2GRAY)
+    dest_img_crop = cv2.cvtColor(dest_img_crop, cv2.COLOR_RGB2GRAY)
+    # get_images_mosaic_no_labels("Mosaic", [source_img_crop, dest_img_crop], 1, 2).show()
+    lbp_source = lpb_extractor.describe(source_img_crop)
+    lbp_dest = lpb_extractor.describe(dest_img_crop)
+    lbp_complete = np.concatenate([lbp_source.flatten(), lbp_dest.flatten()])
+    return lbp_complete
