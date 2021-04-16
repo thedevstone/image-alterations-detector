@@ -9,8 +9,8 @@ def load_model(model_path):
     :return: the Keras model
     """
     dice_loss = sm.losses.DiceLoss()
-    jackard_loss = sm.losses.JaccardLoss()
-    total_loss = dice_loss + jackard_loss
+    jaccard_loss = sm.losses.JaccardLoss()
+    total_loss = dice_loss + jaccard_loss
     inference_model = keras.models.load_model(
         model_path,
         custom_objects={

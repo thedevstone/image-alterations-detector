@@ -2,12 +2,11 @@ from typing import List, Tuple
 
 import cv2
 import numpy as np
-from nptyping import NDArray, Int
 
 from face_morphology.landmarks_triangulation.conversions import points_to_list_of_tuple
 
 
-def compute_triangulation_from_landmarks(img: np.ndarray, landmarks: np.ndarray) -> NDArray[Int]:
+def compute_triangulation_from_landmarks(img: np.ndarray, landmarks: np.ndarray) -> np.ndarray:
     """ Compute the Delaunay triangulations on the image according to given landmarks_prediction.
     
     :param img: the input image
@@ -24,11 +23,11 @@ def compute_triangulation_from_landmarks(img: np.ndarray, landmarks: np.ndarray)
         p = tuple(p)
         subdivision.insert(p)
     # Get landmarks_triangulation
-    triangles_points: NDArray[Int] = subdivision.getTriangleList().astype(NDArray[Int])
-    return triangles_points
+    triangles_points: np.ndarray = subdivision.getTriangleList()
+    return triangles_points.astype('int')
 
 
-def get_triangulations_indexes(img: np.ndarray, landmarks: np.ndarray) -> np.ndarray:
+def compute_triangulation_indexes(img: np.ndarray, landmarks: np.ndarray) -> np.ndarray:
     """ Get landmarks_triangulation indexes bases on points list
 
     :param img: the input image

@@ -1,32 +1,37 @@
 # import the necessary packages
+
 import cv2
 import numpy as np
 
+from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
 from face_morphology.landmarks_prediction.utils import FACIAL_LANDMARKS_68_INDEXES, FACIAL_LANDMARKS_5_INDEXES
 
 
 class FaceAligner:
-    def __init__(self, left_eye_percentage=(0.40, 0.40), desired_face_width=256, desired_face_height=None):
+    def __init__(self, left_eye_percentage=(0.40, 0.40), desired_face_width=256, desired_face_height=None,
+                 predictor_type='dlib'):
         """ Define aligner for all images.
 
         :param left_eye_percentage: An optional (x, y) tuple with the default shown, specifying the desired output left eye position. For this variable, it is common to see percentages within the range of 20-40%. These percentages control how much of the face is visible after alignment. The exact percentages used will vary on an application-to-application basis. With 20% you’ll basically be getting a “zoomed in” view of the face, whereas with larger values the face will appear more “zoomed out.”.
         :param desired_face_width: optional parameter that defines our desired face with in pixels.
         :param desired_face_height: optional parameter specifying our desired face height value in pixels
+        :param predictor_type: the predictor type. 'dlib' for standard fast predictor or 'dnn' for slow deep predictor
         """
         self.left_eye_percentage = left_eye_percentage
         self.desired_face_width = desired_face_width
         self.desired_face_height = desired_face_height
+        self.predictor = LandmarkPredictor(predictor_type)
         if self.desired_face_height is None:
             self.desired_face_height = self.desired_face_width
 
-    def align(self, image: np.ndarray, shape: np.ndarray) -> np.ndarray:
+    def align(self, image: np.ndarray) -> np.ndarray:
         """ Align image
 
         :param image: the image
-        :param shape: the landmark shape
         :return: the aligned image
         """
         # Extract the left and right eye (x, y)-coordinates
+        shape = self.predictor.get_2d_landmarks(image)
         if len(shape) == 68:
             (lStart, lEnd) = FACIAL_LANDMARKS_68_INDEXES["left_eye"]
             (rStart, rEnd) = FACIAL_LANDMARKS_68_INDEXES["right_eye"]
@@ -70,3 +75,7 @@ class FaceAligner:
         output = cv2.warpAffine(image, rotation_matrix, (w, h), flags=cv2.INTER_CUBIC)
         # Return the aligned face
         return output
+
+
+if __name__ == '__main__':
+    aligner = FaceAligner()

@@ -6,15 +6,16 @@ from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPred
 from face_morphology.landmarks_prediction.visualization import visualize_facial_landmarks_areas, \
     visualize_facial_landmarks_points
 from face_transform.homography_transformation.homography import apply_homography_from_landmarks
+from file_system.path_utilities import get_image_path
 from plotting.plotting import get_images_mosaic_with_label
 
 
 def main():
-    landmark_extractor = LandmarkPredictor("../../../../models/shape_predictor_68_face_landmarks.dat")
+    landmark_extractor = LandmarkPredictor()
     face_extractor = FaceDetector()
     # Images
-    img1 = cv2.imread('../../../../images/img1.jpg', cv2.IMREAD_COLOR)
-    img2 = cv2.imread('../../../../images/img2.jpg', cv2.IMREAD_COLOR)
+    img1 = cv2.imread(get_image_path('img1.jpg'), cv2.IMREAD_COLOR)
+    img2 = cv2.imread(get_image_path('img2.jpg'), cv2.IMREAD_COLOR)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
     # Bbox and landmarks_prediction

@@ -14,7 +14,7 @@ from double_image_features.triangles_measures import compute_mean_triangles_area
 from face_morphology.face_detection.face_detector import FaceDetector
 from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
 from face_morphology.landmarks_triangulation.conversions import triangulation_indexes_to_points
-from face_morphology.landmarks_triangulation.delaunay import get_triangulations_indexes
+from face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
 from face_transform.face_alignment.face_aligner import FaceAligner
 from handcrafted_features.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     aligner = FaceAligner(desired_face_width=genuine_1[0].shape[0])
     # Extract indexes from one of the two
     points = extractor.get_2d_landmarks(genuine_1[0])
-    triangles_indexes = get_triangulations_indexes(genuine_1[0], points)
+    triangles_indexes = compute_triangulation_indexes(genuine_1[0], points)
     for idx in range(0, len(genuine_1)):
         img_genuine_1 = genuine_1[idx]
         img_genuine_5 = genuine_5[idx]

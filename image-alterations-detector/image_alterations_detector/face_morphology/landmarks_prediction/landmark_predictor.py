@@ -3,19 +3,19 @@ import numpy as np
 from face_alignment import FaceAlignment, LandmarksType
 
 from face_morphology.landmarks_prediction.conversions import landmarks_to_array
-
-
 # wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+from file_system.path_utilities import get_model_path
+
+
 class LandmarkPredictor:
-    def __init__(self, dat_file, predictor_type='dlib'):
+    def __init__(self, predictor_type='dlib'):
         """ Initialize the landmark predictor
 
-        :param dat_file: path to the .dat model for dlib predictor
         :param predictor_type: the predictor type. 'dlib' for standard fast predictor or 'dnn' for slow deep predictor
         """
         self.predictor_type = predictor_type
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor(dat_file)
+        self.predictor = dlib.shape_predictor(get_model_path('shape_predictor_68_face_landmarks.dat'))
         self.deep_predictor = FaceAlignment(LandmarksType._2D, flip_input=False, device='cpu')
 
     def get_2d_landmarks(self, img: np.ndarray) -> np.ndarray:
