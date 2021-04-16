@@ -1,6 +1,7 @@
 import numpy as np
 
-from descriptors.triangle_descriptors.triangle_descriptors import compute_triangle_affine_matrix
+from image_alterations_detector.descriptors.triangle_descriptors.triangle_descriptors import \
+    compute_triangle_affine_matrix
 
 
 def compute_affine_matrices_descriptor(source1_triangles_points: np.ndarray,

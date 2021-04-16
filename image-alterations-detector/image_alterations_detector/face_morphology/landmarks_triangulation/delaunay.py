@@ -3,7 +3,7 @@ from typing import List, Tuple
 import cv2
 import numpy as np
 
-from face_morphology.landmarks_triangulation.conversions import points_to_list_of_tuple
+from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import points_to_list_of_tuple
 
 
 def compute_triangulation_from_landmarks(img: np.ndarray, landmarks: np.ndarray) -> np.ndarray:

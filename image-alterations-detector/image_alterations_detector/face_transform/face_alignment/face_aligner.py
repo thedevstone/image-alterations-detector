@@ -3,8 +3,9 @@
 import cv2
 import numpy as np
 
-from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
-from face_morphology.landmarks_prediction.utils import FACIAL_LANDMARKS_68_INDEXES, FACIAL_LANDMARKS_5_INDEXES
+from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
+from image_alterations_detector.face_morphology.landmarks_prediction.utils import FACIAL_LANDMARKS_68_INDEXES, \
+    FACIAL_LANDMARKS_5_INDEXES
 
 
 class FaceAligner:

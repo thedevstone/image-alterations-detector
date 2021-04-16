@@ -5,7 +5,7 @@ from typing import Tuple
 import cv2
 import numpy as np
 
-from face_morphology.landmarks_triangulation.conversions import unpack_triangle_coordinates
+from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import unpack_triangle_coordinates
 
 
 def compute_triangle_area(triangle_points: np.ndarray) -> float:

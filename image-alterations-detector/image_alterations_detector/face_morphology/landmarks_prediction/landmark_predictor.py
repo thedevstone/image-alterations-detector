@@ -2,9 +2,8 @@ import dlib
 import numpy as np
 from face_alignment import FaceAlignment, LandmarksType
 
-from face_morphology.landmarks_prediction.conversions import landmarks_to_array
-# wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-from file_system.path_utilities import get_model_path
+from image_alterations_detector.face_morphology.landmarks_prediction.conversions import landmarks_to_array
+from image_alterations_detector.file_system.path_utilities import get_model_path
 
 
 class LandmarkPredictor:

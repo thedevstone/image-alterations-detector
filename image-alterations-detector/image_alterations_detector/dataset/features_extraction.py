@@ -8,19 +8,21 @@ from sklearn.preprocessing import normalize
 from sklearn.svm import SVC
 from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization
 
-from dataset.dataset_utils import load_altered_dataset
-from descriptors.double_image_alteration_descriptors.shape_transform_descriptor import \
+from image_alterations_detector.dataset.dataset_utils import load_altered_dataset
+from image_alterations_detector.descriptors.double_image_alteration_descriptors.shape_transform_descriptor import \
     compute_affine_matrices_descriptor
-from descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import compute_face_lbp_difference
-from descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
+from image_alterations_detector.descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import \
+    compute_face_lbp_difference
+from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
     compute_mean_triangles_area_differences_descriptor, compute_mean_triangles_centroids_distances_descriptor, \
     compute_mean_triangles_angles_distances_descriptor
-from descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
-from face_morphology.face_detection.face_detector import FaceDetector
-from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
-from face_morphology.landmarks_triangulation.conversions import triangulation_indexes_to_points
-from face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
-from face_transform.face_alignment.face_aligner import FaceAligner
+from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
+from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
+from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
+from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
+    triangulation_indexes_to_points
+from image_alterations_detector.face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
+from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
 if __name__ == '__main__':
     dataset_path = '/Users/luca/Desktop/altered'

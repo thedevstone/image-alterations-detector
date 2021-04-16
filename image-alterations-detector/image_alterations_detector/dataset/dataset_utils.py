@@ -12,11 +12,6 @@ def load_altered_dataset(path_to_dataset) -> Tuple[Tuple[List[np.ndarray], List[
 
     def load_image(path):
         img = cv2.imread(path, cv2.IMREAD_COLOR)
-        # img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
-        # # equalize the histogram of the Y channel
-        # img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
-        # # convert the YUV image back to RGB format
-        # img_output = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2RGB)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return img
 

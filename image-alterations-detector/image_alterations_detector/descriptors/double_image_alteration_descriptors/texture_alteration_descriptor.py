@@ -2,9 +2,9 @@ import cv2
 import dlib
 import numpy as np
 
-from descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
-from face_morphology.face_detection.conversions import rect_to_bounding_box
-from face_morphology.face_detection.face_detector import FaceDetector
+from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
+from image_alterations_detector.face_morphology.face_detection.conversions import rect_to_bounding_box
+from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
 
 
 def compute_face_lbp_difference(source_img: np.ndarray, dest_img: np.ndarray, detector: FaceDetector,

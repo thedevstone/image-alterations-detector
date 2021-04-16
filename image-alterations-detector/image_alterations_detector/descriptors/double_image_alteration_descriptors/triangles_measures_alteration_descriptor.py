@@ -3,9 +3,8 @@ from math import sqrt
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-from descriptors.triangle_descriptors.triangle_descriptors import compute_triangle_area, \
-    compute_triangle_centroid, \
-    compute_triangle_angles
+from image_alterations_detector.descriptors.triangle_descriptors.triangle_descriptors import compute_triangle_area, \
+    compute_triangle_centroid, compute_triangle_angles
 
 
 def compute_mean_triangles_area_differences_descriptor(source_triangles_points: np.ndarray,
