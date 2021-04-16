@@ -1,9 +1,0 @@
-dlib~=19.22.0
-numpy~=1.19.5
-opencv-python~=4.5.1.48
-matplotlib~=3.4.0
-pytz~=2021.1
-wandb~=0.10.25
-tensorflow~=2.4.1
-sklearn~=0.0
-scikit-learn~=0.24.1
