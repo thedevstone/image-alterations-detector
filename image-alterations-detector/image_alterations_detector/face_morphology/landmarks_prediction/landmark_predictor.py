@@ -14,7 +14,7 @@ class LandmarkPredictor:
         """
         self.predictor_type = predictor_type
         self.detector = dlib.get_frontal_face_detector()
-        self.predictor = dlib.shape_predictor(get_model_path('shape_predictor_68_face_landmarks_GTX.dat'))
+        self.predictor = dlib.shape_predictor(get_model_path('shape_predictor_68_face_landmarks.dat'))
         self.deep_predictor = FaceAlignment(LandmarksType._2D, flip_input=False, device='cpu')
 
     def get_2d_landmarks(self, img: np.ndarray) -> np.ndarray:
