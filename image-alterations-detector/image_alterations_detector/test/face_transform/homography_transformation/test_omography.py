@@ -1,13 +1,14 @@
 import cv2
 
-from face_morphology.face_detection.face_detector import FaceDetector
-from face_morphology.face_detection.visualization import draw_faces_bounding_boxes
-from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
-from face_morphology.landmarks_prediction.visualization import visualize_facial_landmarks_areas, \
-    visualize_facial_landmarks_points
-from face_transform.homography_transformation.homography import apply_homography_from_landmarks
-from file_system.path_utilities import get_image_path
-from plotting.plotting import get_images_mosaic_with_label
+from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
+from image_alterations_detector.face_morphology.face_detection.visualization import draw_faces_bounding_boxes
+from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
+from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
+    visualize_facial_landmarks_areas, visualize_facial_landmarks_points
+from image_alterations_detector.face_transform.homography_transformation.homography import \
+    apply_homography_from_landmarks
+from image_alterations_detector.file_system.path_utilities import get_image_path
+from image_alterations_detector.plotting.plotting import get_images_mosaic_with_label
 
 
 def main():

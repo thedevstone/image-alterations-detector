@@ -12,7 +12,7 @@ def get_root_folder_path(file, folder_path_from_root):
     """
     file_path = os.path.join(ROOT_DIR, folder_path_from_root, file)
     if not os.path.exists(file_path):
-        raise FileNotFoundError('Check if file exists')
+        raise FileNotFoundError('Check if file exists in {}'.format(file_path))
     else:
         return file_path
 

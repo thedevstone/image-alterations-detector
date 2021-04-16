@@ -2,7 +2,7 @@ import cv2
 import dlib
 import numpy as np
 
-from face_morphology.face_detection.conversions import rect_to_bounding_box
+from image_alterations_detector.face_morphology.face_detection.conversions import rect_to_bounding_box
 
 
 def draw_faces_bounding_boxes(img: np.ndarray, rects: dlib.rectangles):

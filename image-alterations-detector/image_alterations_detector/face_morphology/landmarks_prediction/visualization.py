@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from face_morphology.landmarks_prediction.utils import FACIAL_LANDMARKS_INDEXES
+from image_alterations_detector.face_morphology.landmarks_prediction.utils import FACIAL_LANDMARKS_INDEXES
 
 
 def visualize_facial_landmarks_points(img: np.ndarray, landmarks_2d: np.ndarray) -> np.ndarray:

@@ -1,8 +1,8 @@
 import cv2
 
-from face_transform.face_alignment.face_aligner import FaceAligner
-from file_system.path_utilities import get_image_path
-from plotting.plotting import get_images_mosaic_with_label
+from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
+from image_alterations_detector.file_system.path_utilities import get_image_path
+from image_alterations_detector.plotting.plotting import get_images_mosaic_with_label
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
 
     # Images
     img1 = cv2.imread(get_image_path("img1.jpg"), cv2.IMREAD_COLOR)
-    img1_rotated = cv2.imread(get_image_path('img1_rotated.png'), cv2.IMREAD_COLOR)
+    img1_rotated = cv2.imread(get_image_path('img1_rotated.jpeg'), cv2.IMREAD_COLOR)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
     img1_rotated = cv2.cvtColor(img1_rotated, cv2.COLOR_BGR2RGB)
 
