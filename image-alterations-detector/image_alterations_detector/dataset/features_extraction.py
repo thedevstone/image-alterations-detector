@@ -9,14 +9,18 @@ from sklearn.svm import SVC
 from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization
 
 from dataset.dataset_utils import load_altered_dataset
-from double_image_features.triangles_measures import compute_mean_triangles_area, compute_mean_centroids_distances, \
-    compute_mean_angles_distances, compute_mean_affine_matrices_distances, compute_face_lbp_difference
+from descriptors.double_image_alteration_descriptors.shape_transform_descriptor import \
+    compute_affine_matrices_descriptor
+from descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import compute_face_lbp_difference
+from descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
+    compute_mean_triangles_area_differences_descriptor, compute_mean_triangles_centroids_distances_descriptor, \
+    compute_mean_triangles_angles_distances_descriptor
+from descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
 from face_morphology.face_detection.face_detector import FaceDetector
 from face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
 from face_morphology.landmarks_triangulation.conversions import triangulation_indexes_to_points
 from face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
 from face_transform.face_alignment.face_aligner import FaceAligner
-from handcrafted_features.local_binary_pattern.local_binary_pattern import LocalBinaryPattern
 
 if __name__ == '__main__':
     dataset_path = '/Users/luca/Desktop/altered'
@@ -31,12 +35,13 @@ if __name__ == '__main__':
     genuine, altered = load_altered_dataset(dataset_path)
     genuine_1, genuine_5, genuine_14 = genuine
     beauty_a, beauty_b, beauty_c = altered
-    extractor = LandmarkPredictor("../../models/shape_predictor_68_face_landmarks.dat")
+    extractor = LandmarkPredictor()
     detector = FaceDetector()
     lbp = LocalBinaryPattern(24, 8)
     aligner = FaceAligner(desired_face_width=genuine_1[0].shape[0])
     # Extract indexes from one of the two
     points = extractor.get_2d_landmarks(genuine_1[0])
+
     triangles_indexes = compute_triangulation_indexes(genuine_1[0], points)
     for idx in range(0, len(genuine_1)):
         img_genuine_1 = genuine_1[idx]
@@ -45,20 +50,13 @@ if __name__ == '__main__':
         img_beauty_a = beauty_a[idx]
         img_beauty_b = beauty_b[idx]
         img_beauty_c = beauty_c[idx]
-        # Extract landmark indexes
-        img_genuine_1_points = extractor.get_2d_landmarks(img_genuine_1)
-        img_genuine_5_points = extractor.get_2d_landmarks(img_genuine_5)
-        img_genuine_14_points = extractor.get_2d_landmarks(img_genuine_14)
-        img_beauty_a_points = extractor.get_2d_landmarks(img_beauty_a)
-        img_beauty_b_points = extractor.get_2d_landmarks(img_beauty_b)
-        img_beauty_c_points = extractor.get_2d_landmarks(img_beauty_c)
         # Align face_detection
-        img_genuine_1 = aligner.align(img_genuine_1, img_genuine_1_points)
-        img_genuine_5 = aligner.align(img_genuine_5, img_genuine_5_points)
-        img_genuine_14 = aligner.align(img_genuine_14, img_genuine_14_points)
-        img_beauty_a = aligner.align(img_beauty_a, img_beauty_a_points)
-        img_beauty_b = aligner.align(img_beauty_b, img_beauty_b_points)
-        img_beauty_c = aligner.align(img_beauty_c, img_beauty_c_points)
+        img_genuine_1 = aligner.align(img_genuine_1)
+        img_genuine_5 = aligner.align(img_genuine_5)
+        img_genuine_14 = aligner.align(img_genuine_14)
+        img_beauty_a = aligner.align(img_beauty_a)
+        img_beauty_b = aligner.align(img_beauty_b)
+        img_beauty_c = aligner.align(img_beauty_c)
         # Extract landmark indexes
         img_genuine_1_points = extractor.get_2d_landmarks(img_genuine_1)
         img_genuine_5_points = extractor.get_2d_landmarks(img_genuine_5)
@@ -77,49 +75,64 @@ if __name__ == '__main__':
         img_beauty_c_tri_points = triangulation_indexes_to_points(img_beauty_c_points, triangles_indexes)
 
         # Compute area
-        mean_area_difference1_14 = compute_mean_triangles_area(img_genuine_1_tri_points, img_genuine_14_tri_points)
-        mean_area_difference1_5 = compute_mean_triangles_area(img_genuine_1_tri_points, img_genuine_5_tri_points)
-        mean_area_difference1_a = compute_mean_triangles_area(img_genuine_1_tri_points, img_beauty_a_tri_points)
-        mean_area_difference1_b = compute_mean_triangles_area(img_genuine_1_tri_points, img_beauty_b_tri_points)
-        mean_area_difference1_c = compute_mean_triangles_area(img_genuine_1_tri_points, img_beauty_c_tri_points)
+        mean_area_difference1_14 = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
+                                                                                      img_genuine_14_tri_points)
+        mean_area_difference1_5 = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
+                                                                                     img_genuine_5_tri_points)
+        mean_area_difference1_a = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
+                                                                                     img_beauty_a_tri_points)
+        mean_area_difference1_b = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
+                                                                                     img_beauty_b_tri_points)
+        mean_area_difference1_c = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
+                                                                                     img_beauty_c_tri_points)
 
         mean_area.extend(
             [mean_area_difference1_14, mean_area_difference1_5, mean_area_difference1_a, mean_area_difference1_b,
              mean_area_difference1_c])
 
         # Compute centroid
-        centroid_distances1_14 = compute_mean_centroids_distances(img_genuine_1_tri_points, img_genuine_14_tri_points)
-        centroid_distances1_5 = compute_mean_centroids_distances(img_genuine_1_tri_points, img_genuine_5_tri_points)
-        centroid_distances1_a = compute_mean_centroids_distances(img_genuine_1_tri_points, img_beauty_a_tri_points)
-        centroid_distances1_b = compute_mean_centroids_distances(img_genuine_1_tri_points, img_beauty_b_tri_points)
-        centroid_distances1_c = compute_mean_centroids_distances(img_genuine_1_tri_points, img_beauty_c_tri_points)
+        centroid_distances1_14 = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
+                                                                                       img_genuine_14_tri_points)
+        centroid_distances1_5 = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
+                                                                                      img_genuine_5_tri_points)
+        centroid_distances1_a = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
+                                                                                      img_beauty_a_tri_points)
+        centroid_distances1_b = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
+                                                                                      img_beauty_b_tri_points)
+        centroid_distances1_c = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
+                                                                                      img_beauty_c_tri_points)
 
         centroids.extend(
             [centroid_distances1_14, centroid_distances1_5, centroid_distances1_a, centroid_distances1_b,
              centroid_distances1_c])
 
         # Compute cosine similarity
-        angles_distances1_14 = compute_mean_angles_distances(img_genuine_1_tri_points, img_genuine_14_tri_points)
-        angles_distances1_5 = compute_mean_angles_distances(img_genuine_1_tri_points, img_genuine_5_tri_points)
-        angles_distances1_a = compute_mean_angles_distances(img_genuine_1_tri_points, img_beauty_a_tri_points)
-        angles_distances1_b = compute_mean_angles_distances(img_genuine_1_tri_points, img_beauty_b_tri_points)
-        angles_distances1_c = compute_mean_angles_distances(img_genuine_1_tri_points, img_beauty_c_tri_points)
+        angles_distances1_14 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                  img_genuine_14_tri_points)
+        angles_distances1_5 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                 img_genuine_5_tri_points)
+        angles_distances1_a = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                 img_beauty_a_tri_points)
+        angles_distances1_b = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                 img_beauty_b_tri_points)
+        angles_distances1_c = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                 img_beauty_c_tri_points)
 
         angles.extend(
             [angles_distances1_14, angles_distances1_5, angles_distances1_a, angles_distances1_b,
              angles_distances1_c])
 
         # Matrix distances
-        affine_matrices_distances1_14 = compute_mean_affine_matrices_distances(img_genuine_1_tri_points,
-                                                                               img_genuine_14_tri_points)
-        affine_matrices_distances1_5 = compute_mean_affine_matrices_distances(img_genuine_1_tri_points,
-                                                                              img_genuine_5_tri_points)
-        affine_matrices_distances1_a = compute_mean_affine_matrices_distances(img_genuine_1_tri_points,
-                                                                              img_beauty_a_tri_points)
-        affine_matrices_distances1_b = compute_mean_affine_matrices_distances(img_genuine_1_tri_points,
-                                                                              img_beauty_b_tri_points)
-        affine_matrices_distances1_c = compute_mean_affine_matrices_distances(img_genuine_1_tri_points,
-                                                                              img_beauty_c_tri_points)
+        affine_matrices_distances1_14 = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
+                                                                           img_genuine_14_tri_points)
+        affine_matrices_distances1_5 = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
+                                                                          img_genuine_5_tri_points)
+        affine_matrices_distances1_a = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
+                                                                          img_beauty_a_tri_points)
+        affine_matrices_distances1_b = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
+                                                                          img_beauty_b_tri_points)
+        affine_matrices_distances1_c = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
+                                                                          img_beauty_c_tri_points)
         matrices.extend(
             [affine_matrices_distances1_14, affine_matrices_distances1_5, affine_matrices_distances1_a,
              affine_matrices_distances1_b,

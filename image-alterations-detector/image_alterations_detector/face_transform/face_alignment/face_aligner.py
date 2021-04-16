@@ -25,10 +25,12 @@ class FaceAligner:
             self.desired_face_height = self.desired_face_width
 
     def align(self, image: np.ndarray) -> np.ndarray:
-        """ Align image
+        """ Align image according to eye position
 
         :param image: the image
         :return: the aligned image
+
+        .. warning:: High computational cost for landmark computation
         """
         # Extract the left and right eye (x, y)-coordinates
         shape = self.predictor.get_2d_landmarks(image)

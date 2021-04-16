@@ -2,6 +2,7 @@ import math
 from math import sqrt
 from typing import Tuple
 
+import cv2
 import numpy as np
 
 from face_morphology.landmarks_triangulation.conversions import unpack_triangle_coordinates
@@ -53,3 +54,24 @@ def compute_triangle_angles(triangle_points: np.ndarray) -> np.ndarray:
     theta_23 = math.atan2(dy_23, dx_23)
     theta_31 = math.atan2(dy_31, dx_31)
     return np.array([theta_12, theta_23, theta_31])
+
+
+def compute_triangle_affine_matrix(source_triangle_points: np.ndarray, dest_triangle_points: np.ndarray) -> np.ndarray:
+    """ Compute the mean of all cosine distance between all pairs of angles (a1, b1, c1) (a2, b2, c2) of
+           corresponding triangles in source and destination image Delaunay triangulation
+
+    :param source_triangle_points: numpy source array of triangles
+    :param dest_triangle_points: numpy dest array of triangles
+    :return: the mean angles distances rounded to second decimal
+    """
+    pt1_source = source_triangle_points[0], source_triangle_points[1]
+    pt2_source = source_triangle_points[2], source_triangle_points[3]
+    pt3_source = source_triangle_points[4], source_triangle_points[5]
+    pt1_dest = dest_triangle_points[0], dest_triangle_points[1]
+    pt2_dest = dest_triangle_points[2], dest_triangle_points[3]
+    pt3_dest = dest_triangle_points[4], dest_triangle_points[5]
+
+    pts_source = np.float32([pt1_source, pt2_source, pt3_source])
+    pts_dest = np.float32([pt1_dest, pt2_dest, pt3_dest])
+    warping_matrix = cv2.getAffineTransform(pts_source, pts_dest)
+    return warping_matrix

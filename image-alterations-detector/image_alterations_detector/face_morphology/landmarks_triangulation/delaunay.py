@@ -24,7 +24,7 @@ def compute_triangulation_from_landmarks(img: np.ndarray, landmarks: np.ndarray)
         subdivision.insert(p)
     # Get landmarks_triangulation
     triangles_points: np.ndarray = subdivision.getTriangleList()
-    return triangles_points.astype('int')
+    return triangles_points
 
 
 def compute_triangulation_indexes(img: np.ndarray, landmarks: np.ndarray) -> np.ndarray:
@@ -34,7 +34,7 @@ def compute_triangulation_indexes(img: np.ndarray, landmarks: np.ndarray) -> np.
     :param landmarks: the landmarks_prediction
     :return: a list of tuples ot triangles points
     """
-    triangles = compute_triangulation_from_landmarks(img, landmarks).astype('int')
+    triangles = compute_triangulation_from_landmarks(img, landmarks)
     triangles_indexes = np.zeros((len(triangles), 3), dtype='int')
     points_list: List[Tuple[int, int]] = points_to_list_of_tuple(landmarks)
     for i, t in enumerate(triangles):
