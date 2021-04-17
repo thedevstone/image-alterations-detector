@@ -14,8 +14,7 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import \
     compute_face_lbp_difference
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
-    compute_mean_triangles_area_differences_descriptor, compute_mean_triangles_centroids_distances_descriptor, \
-    compute_mean_triangles_angles_distances_descriptor
+    compute_mean_triangles_area_differences_descriptor
 from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
 from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
 from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
@@ -27,8 +26,6 @@ from image_alterations_detector.face_transform.face_alignment.face_aligner impor
 if __name__ == '__main__':
     dataset_path = '/Users/luca/Desktop/altered'
     mean_area = []
-    centroids = []
-    angles = []
     matrices = []
     lbps = []
 
@@ -40,10 +37,10 @@ if __name__ == '__main__':
     extractor = LandmarkPredictor()
     detector = FaceDetector()
     lbp = LocalBinaryPattern(24, 8)
-    aligner = FaceAligner(desired_face_width=genuine_1[0].shape[0])
-    # Extract indexes from one of the two
-    points = extractor.get_2d_landmarks(genuine_1[0])
+    aligner = FaceAligner(desired_face_width=512)
 
+    # Extract indexes from one image
+    points = extractor.get_2d_landmarks(genuine_1[0])
     triangles_indexes = compute_triangulation_indexes(genuine_1[0], points)
     for idx in range(0, len(genuine_1)):
         img_genuine_1 = genuine_1[idx]
@@ -52,26 +49,20 @@ if __name__ == '__main__':
         img_beauty_a = beauty_a[idx]
         img_beauty_b = beauty_b[idx]
         img_beauty_c = beauty_c[idx]
-        # Align face_detection
-        img_genuine_1 = aligner.align(img_genuine_1)
-        img_genuine_5 = aligner.align(img_genuine_5)
-        img_genuine_14 = aligner.align(img_genuine_14)
-        img_beauty_a = aligner.align(img_beauty_a)
-        img_beauty_b = aligner.align(img_beauty_b)
-        img_beauty_c = aligner.align(img_beauty_c)
-        # Extract landmark indexes
-        img_genuine_1_points = extractor.get_2d_landmarks(img_genuine_1)
-        img_genuine_5_points = extractor.get_2d_landmarks(img_genuine_5)
-        img_genuine_14_points = extractor.get_2d_landmarks(img_genuine_14)
-        img_beauty_a_points = extractor.get_2d_landmarks(img_beauty_a)
-        img_beauty_b_points = extractor.get_2d_landmarks(img_beauty_b)
-        img_beauty_c_points = extractor.get_2d_landmarks(img_beauty_c)
-
+        # Align face
+        try:
+            img_genuine_1, img_genuine_1_points = aligner.align(img_genuine_1)
+            img_genuine_5, img_genuine_5_points = aligner.align(img_genuine_5)
+            img_genuine_14, img_genuine_14_points = aligner.align(img_genuine_14)
+            img_beauty_a, img_beauty_a_points = aligner.align(img_beauty_a)
+            img_beauty_b, img_beauty_b_points = aligner.align(img_beauty_b)
+            img_beauty_c, img_beauty_c_points = aligner.align(img_beauty_c)
+        except IndexError:
+            continue
         # Extract indexes from one of the two
         img_genuine_1_tri_points = triangulation_indexes_to_points(img_genuine_1_points, triangles_indexes)
         img_genuine_5_tri_points = triangulation_indexes_to_points(img_genuine_5_points, triangles_indexes)
-        img_genuine_14_tri_points = triangulation_indexes_to_points(img_genuine_14_points,
-                                                                    triangles_indexes)
+        img_genuine_14_tri_points = triangulation_indexes_to_points(img_genuine_14_points, triangles_indexes)
         img_beauty_a_tri_points = triangulation_indexes_to_points(img_beauty_a_points, triangles_indexes)
         img_beauty_b_tri_points = triangulation_indexes_to_points(img_beauty_b_points, triangles_indexes)
         img_beauty_c_tri_points = triangulation_indexes_to_points(img_beauty_c_points, triangles_indexes)
@@ -91,38 +82,6 @@ if __name__ == '__main__':
         mean_area.extend(
             [mean_area_difference1_14, mean_area_difference1_5, mean_area_difference1_a, mean_area_difference1_b,
              mean_area_difference1_c])
-
-        # Compute centroid
-        centroid_distances1_14 = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
-                                                                                       img_genuine_14_tri_points)
-        centroid_distances1_5 = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
-                                                                                      img_genuine_5_tri_points)
-        centroid_distances1_a = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
-                                                                                      img_beauty_a_tri_points)
-        centroid_distances1_b = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
-                                                                                      img_beauty_b_tri_points)
-        centroid_distances1_c = compute_mean_triangles_centroids_distances_descriptor(img_genuine_1_tri_points,
-                                                                                      img_beauty_c_tri_points)
-
-        centroids.extend(
-            [centroid_distances1_14, centroid_distances1_5, centroid_distances1_a, centroid_distances1_b,
-             centroid_distances1_c])
-
-        # Compute cosine similarity
-        angles_distances1_14 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
-                                                                                  img_genuine_14_tri_points)
-        angles_distances1_5 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
-                                                                                 img_genuine_5_tri_points)
-        angles_distances1_a = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
-                                                                                 img_beauty_a_tri_points)
-        angles_distances1_b = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
-                                                                                 img_beauty_b_tri_points)
-        angles_distances1_c = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
-                                                                                 img_beauty_c_tri_points)
-
-        angles.extend(
-            [angles_distances1_14, angles_distances1_5, angles_distances1_a, angles_distances1_b,
-             angles_distances1_c])
 
         # Matrix distances
         affine_matrices_distances1_14 = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
@@ -152,22 +111,18 @@ if __name__ == '__main__':
         labels.extend([0, 0, 1, 1, 1])
 
     mean_area = np.array(mean_area).astype('float32')
-    centroids = np.array(centroids).astype('float32')
-    angles = np.array(angles).astype('float32')
     matrices = np.array(matrices).astype('float32')
     lbps = np.array(lbps).astype('float32')
 
     # Normalize
     mean_area = normalize(mean_area, norm='max')
-    centroids = normalize(centroids, norm='max')
-    angles = normalize(angles, norm='max')
     matrices = normalize(matrices, norm='max')
     # lbps = normalize(lbps, norm='max')
 
     dataset = np.column_stack([mean_area, matrices])
     labels = np.array(labels)
 
-    print(mean_area.shape, centroids.shape, angles.shape, matrices.shape, lbps.shape)
+    print(mean_area.shape, matrices.shape, lbps.shape)
 
     x_train_mean_area, x_test_mean_area, y_train_mean_area, y_test_mean_area = train_test_split(lbps, labels,
                                                                                                 test_size=0.2,

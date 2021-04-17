@@ -23,9 +23,9 @@ def main():
     extractor = LandmarkPredictor()
     # Align face_detection
     aligner = FaceAligner(desired_face_width=img1.shape[0])
-    img1 = aligner.align(img1)
-    img2 = aligner.align(img2)
-    img_beauty = aligner.align(img_beauty)
+    img1, landmarks1 = aligner.align(img1)
+    img2, landmarks2 = aligner.align(img2)
+    img_beauty, landmarks_beauty = aligner.align(img_beauty)
     # New landmarks_prediction
     points1 = extractor.get_2d_landmarks(img1)
     points2 = extractor.get_2d_landmarks(img2)

@@ -1,4 +1,5 @@
 # import the necessary packages
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -25,7 +26,7 @@ class FaceAligner:
         if self.desired_face_height is None:
             self.desired_face_height = self.desired_face_width
 
-    def align(self, image: np.ndarray) -> np.ndarray:
+    def align(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """ Align image according to eye position
 
         :param image: the image
@@ -76,14 +77,16 @@ class FaceAligner:
         # Apply the affine transformation
         (w, h) = (self.desired_face_width, self.desired_face_height)
         output = cv2.warpAffine(image, rotation_matrix, (w, h), flags=cv2.INTER_CUBIC)
-        # Return the aligned face
+
         # ones = np.ones(shape=(len(shape), 1))
         # landmarks_one = np.hstack([shape, ones])
         # warped_landmarks = rotation_matrix.dot(landmarks_one.T).T
         #
-        # transformed_landmarks = np.reshape(cv2.transform(np.expand_dims(shape, 1), rotation_matrix), (68, 2)).astype(
-        #     'int')
-        return output
+        # transformed_landmarks = np.reshape(cv2.transform(np.expand_dims(shape, 1), rotation_matrix), (68, 2)).astype('int')
+        transformed_landmarks = self.predictor.get_2d_landmarks(output)
+
+        # Return the aligned face with new landmarks
+        return output, transformed_landmarks
 
 
 if __name__ == '__main__':

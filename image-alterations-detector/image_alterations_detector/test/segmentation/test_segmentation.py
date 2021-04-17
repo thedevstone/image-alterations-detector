@@ -21,7 +21,7 @@ def main():
     # Images
     img1 = cv2.imread(get_image_path('img1.jpg'), cv2.IMREAD_COLOR)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-    img1 = aligner.align(img1)
+    img1, landmarks = aligner.align(img1)
     img1 = img1.reshape((1, img1.shape[0], img1.shape[1], img1.shape[2])).astype('float')
     img1_normalized = img1 / 255.0
 
