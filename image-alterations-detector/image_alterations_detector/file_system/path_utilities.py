@@ -3,7 +3,15 @@ import os
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def get_root_folder_path(file, folder_path_from_root):
+def get_folder_path_from_root(folder_path_from_root):
+    folder_path = os.path.join(ROOT_DIR, folder_path_from_root)
+    if not os.path.exists(folder_path):
+        raise FileNotFoundError('Check if folder exists in {}'.format(folder_path))
+    else:
+        return folder_path
+
+
+def get_file_path_from_root(file, folder_path_from_root):
     """ Get the path to a sub-root folder
 
     :param file: the file
@@ -23,7 +31,7 @@ def get_model_path(model_file) -> str:
     :param model_file: the model file
     :return: the absolute path
     """
-    return get_root_folder_path(model_file, 'models')
+    return get_file_path_from_root(model_file, 'models')
 
 
 def get_image_path(image_file) -> str:
@@ -32,4 +40,4 @@ def get_image_path(image_file) -> str:
         :param image_file: the image file
         :return: the absolute path
         """
-    return get_root_folder_path(image_file, 'images')
+    return get_file_path_from_root(image_file, 'images')

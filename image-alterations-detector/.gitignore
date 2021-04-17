@@ -14,11 +14,10 @@ config.yaml
 # Idea
 .idea
 
-# .Dat
-*.dat
-
 # Models
 *.h5
+*.pkl
+*.dat
 
 # Images
 *.png
