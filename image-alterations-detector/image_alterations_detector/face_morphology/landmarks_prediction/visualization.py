@@ -15,7 +15,7 @@ def visualize_facial_landmarks_points(img: np.ndarray, landmarks_2d: np.ndarray)
     for n in range(0, 68):
         x = landmarks_2d[n, 0]
         y = landmarks_2d[n, 1]
-        cv2.circle(img_out, (x, y), 4, (0, 0, 255), -1)
+        cv2.circle(img_out, (x, y), 2, (0, 0, 255), -1)
     return img_out
 
 

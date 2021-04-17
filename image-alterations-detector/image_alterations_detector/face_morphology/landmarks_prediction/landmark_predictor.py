@@ -26,7 +26,7 @@ class LandmarkPredictor:
         """
         faces_bbox = self.detector(img)
         if len(faces_bbox) == 0:
-            raise IndexError("No face_detection found has been found")
+            raise IndexError("No faces has been found")
         return self.get_2d_landmarks_from_bbox(img, faces_bbox[0])
 
     def get_2d_landmarks_from_bbox(self, img: np.ndarray, bbox: dlib.rectangle) -> np.ndarray:

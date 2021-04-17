@@ -77,6 +77,12 @@ class FaceAligner:
         (w, h) = (self.desired_face_width, self.desired_face_height)
         output = cv2.warpAffine(image, rotation_matrix, (w, h), flags=cv2.INTER_CUBIC)
         # Return the aligned face
+        # ones = np.ones(shape=(len(shape), 1))
+        # landmarks_one = np.hstack([shape, ones])
+        # warped_landmarks = rotation_matrix.dot(landmarks_one.T).T
+        #
+        # transformed_landmarks = np.reshape(cv2.transform(np.expand_dims(shape, 1), rotation_matrix), (68, 2)).astype(
+        #     'int')
         return output
 
 
