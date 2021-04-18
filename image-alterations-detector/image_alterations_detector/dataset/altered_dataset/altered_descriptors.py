@@ -42,9 +42,9 @@ def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray,
     affine_matrices = np.array(affine_matrices).astype('float32')
     lbp = np.array(lbp).astype('float32')
     # Normalize
-    mean_area_descriptors = normalize(mean_area, norm='max')
-    matrices_descriptors = normalize(affine_matrices, norm='max')
-    lbp_descriptors = normalize(lbp, norm='max')
+    mean_area_descriptors = normalize(np.expand_dims(mean_area, 0), norm='max')
+    matrices_descriptors = normalize(np.expand_dims(affine_matrices, 0), norm='max')
+    lbp_descriptors = normalize(np.expand_dims(lbp, 0), norm='max')
     return mean_area_descriptors, matrices_descriptors, lbp_descriptors
 
 

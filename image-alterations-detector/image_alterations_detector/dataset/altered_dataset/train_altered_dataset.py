@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
-from image_alterations_detector.dataset.altered_dataset.altered_features import compute_altered_descriptors
+from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_altered_descriptors
 
 
 def train_altered_descriptors():
