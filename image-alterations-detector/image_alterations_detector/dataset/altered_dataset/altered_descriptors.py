@@ -16,6 +16,7 @@ from image_alterations_detector.face_morphology.landmarks_prediction.landmark_pr
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
     triangulation_indexes_to_points
 from image_alterations_detector.face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
+from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
 
@@ -60,14 +61,12 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
     genuine_1, genuine_5, genuine_14 = genuine
     beauty_a, beauty_b, beauty_c = altered
     # Face operations
-    extractor = LandmarkPredictor()
     detector = FaceDetector()
     aligner = FaceAligner(desired_face_width=512)
     # Descriptor
     lbp = LocalBinaryPattern(24, 8)
     # Extract indexes from one image
-    points = extractor.get_2d_landmarks(genuine_1[0])
-    triangles_indexes = compute_triangulation_indexes(genuine_1[0], points)
+    triangles_indexes = load_triangulation('triangulation.txt')
     for idx in range(0, len(genuine_1) if not images_to_load else images_to_load):
         img_genuine_1 = genuine_1[idx]
         img_genuine_5 = genuine_5[idx]

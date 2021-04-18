@@ -7,7 +7,7 @@ from image_alterations_detector.dataset.altered_dataset.altered_descriptors impo
 
 def train_altered_descriptors():
     dataset_path = '/Users/luca/Desktop/altered'
-    mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(dataset_path)
+    mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(dataset_path, 3)
 
     # descriptors: np.ndarray = np.column_stack([matrices_descriptors, lbp_descriptors])
     # print("Big descriptor shape:", descriptors.shape)
@@ -19,9 +19,11 @@ def train_altered_descriptors():
         random_state=23)
 
     # Train on matrices
-    multi_clf_matrices = MlpSvmRf()
+    print("Training on affine matrices")
+    multi_clf_matrices = MlpSvmRf('affine matrices')
     multi_clf_matrices.create_model(x_train_matrices_descriptors.shape[1])
     multi_clf_matrices.fit(x_train_matrices_descriptors, y_train_matrices_descriptors)
+    # Evaluate and save
     multi_clf_matrices.evaluate(x_test_matrices_descriptors, y_test_matrices_descriptors)
     multi_clf_matrices.save_models('matrices_descriptors')
 
@@ -33,9 +35,10 @@ def train_altered_descriptors():
         random_state=23)
 
     # Train on lbp
-    multi_clf_lbp = MlpSvmRf()
+    multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.create_model(x_train_lbp_descriptors.shape[1])
     multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors)
+    # Evaluate and save
     multi_clf_lbp.evaluate(x_test_lbp_descriptors, y_test_lbp_descriptors)
     multi_clf_lbp.save_models('lbp_descriptors')
 
