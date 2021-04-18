@@ -26,9 +26,9 @@ class MlpSvmRf:
         mlp_predicted = self.mlp.predict(x_test)
         return np.array([svm_rf_predicted[0], mlp_predicted[0]])
 
-    def save_models(self, file_prefix):
-        self.svm_rf.save('{}-svm_rf.pkl'.format(file_prefix))
-        self.mlp.save_model('{}-mlp.h5'.format(file_prefix))
+    def save_models(self):
+        self.svm_rf.save('{}-svm_rf.pkl'.format(self.feature_name))
+        self.mlp.save_model('{}-mlp.h5'.format(self.feature_name))
 
     def load_models(self, file_prefix):
         self.svm_rf.load('{}-svm_rf.pkl'.format(file_prefix))

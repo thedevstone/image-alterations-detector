@@ -70,6 +70,8 @@ class SvmRf:
         pr_display.plot(ax=ax2)
         ax3.set_title('Roc curve')
         roc_display.plot(ax=ax3)
+        file_name = '{}-svm_rf.png'.format(self.feature_name)
+        figure.savefig(os.path.join(get_folder_path_from_root('images'), file_name))
         plt.show()
 
     def predict(self, x_test):
