@@ -15,7 +15,17 @@ if __name__ == '__main__':
     print(descriptor1_14_matrix.shape, descriptor1_14_lbp.shape)
     print(descriptor1_c_matrix.shape, descriptor1_c_lbp.shape)
 
-    multi_clf_matrices = MlpSvmRf('affine matrices', svm_c=100, svm_kernel='linear', rf_max_depth=5)
-    multi_clf_matrices.load_models('matrices_descriptors')
+    # Load affine matrices model
+    multi_clf_matrices = MlpSvmRf('affine_matrices', svm_c=1000, svm_kernel='linear', rf_max_depth=5)
+    multi_clf_matrices.create_model(descriptor1_14_matrix.shape[1], layer1=100, layer2=150, activation='tanh',
+                                    dropout=0.5)
+    multi_clf_matrices.load_models('affine_matrices')
+    # Load lbp model
     multi_clf_lbp = MlpSvmRf('lbp', svm_c=1000, svm_kernel='linear', rf_max_depth=13)
-    multi_clf_lbp.load_models('lbp_descriptors')
+    multi_clf_lbp.create_model(descriptor1_14_lbp.shape[1], layer1=300, layer2=100, activation='tanh', dropout=0.5)
+    multi_clf_lbp.load_models('lbp')
+
+    matrix_result = multi_clf_matrices.predict_one(descriptor1_14_matrix)
+    matrix_result_beauty = multi_clf_matrices.predict_one(descriptor1_c_matrix)
+    print(matrix_result)
+    print(matrix_result_beauty)

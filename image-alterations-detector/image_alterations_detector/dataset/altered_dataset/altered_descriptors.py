@@ -15,7 +15,6 @@ from image_alterations_detector.face_morphology.face_detection.face_detector imp
 from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
     triangulation_indexes_to_points
-from image_alterations_detector.face_morphology.landmarks_triangulation.delaunay import compute_triangulation_indexes
 from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
@@ -27,8 +26,7 @@ def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray,
     # Descriptor
     lbp = LocalBinaryPattern(24, 8)
     # Extract indexes from one image
-    points = extractor.get_2d_landmarks(source_image)
-    triangles_indexes = compute_triangulation_indexes(source_image, points)
+    triangles_indexes = load_triangulation('triangulation.txt')
     # Align
     source_image, source_image_landmarks = aligner.align(source_image)
     dest_image, dest_image_landmarks = aligner.align(dest_image)

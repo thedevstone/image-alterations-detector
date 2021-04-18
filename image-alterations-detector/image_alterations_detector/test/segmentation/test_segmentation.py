@@ -28,7 +28,7 @@ def main():
     # Predict
     inference_model = model.load_model(get_model_path('unet.h5'))
 
-    images_predicted = inference_model.predict_one(img1_normalized)
+    images_predicted = inference_model.predict(img1_normalized)
     predicted = conversions.denormalize(images_predicted[0])
     predicted_rgb = conversions.mask_channels_to_rgb(predicted, 8, image_size, colors_values_list)
     plt.imshow(predicted_rgb)

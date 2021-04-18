@@ -32,4 +32,4 @@ class MlpSvmRf:
 
     def load_models(self, file_prefix):
         self.svm_rf.load('{}-svm_rf.pkl'.format(file_prefix))
-        self.mlp.load_model('mlp.h5'.format(file_prefix))
+        self.mlp.load_model('{}-mlp.h5'.format(file_prefix))

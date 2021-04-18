@@ -1,0 +1,19 @@
+Matrices shape: (515, 678)
+Class weights matrices: [1.21176471 0.85123967]
+Training on affine matrices
+Training SVM_RF on affine matrices
+Best: 0.810638 using {'rf__max_depth': 5, 'svm__C': 1000, 'svm__kernel': 'linear'}
+Training MLP on affine matrices
+Best: 0.788686 using {'activation': 'tanh', 'dropout': 0.5, 'layer1': 100, 'layer2': 150}
+MLP performance on test for affine matrices
+Accuracy: 0.8058252427184466 Precision: 0.8852459016393442 Recall: 0.8059701492537313
+LBP shape: (515, 52)
+Class weights lbp: [1.21176471 0.85123967]
+Training SVM_RF on lbp
+Best: 0.970937 using {'rf__max_depth': 5, 'svm__C': 10000, 'svm__kernel': 'linear'}
+Training MLP on lbp
+Best: 0.951602 using {'activation': 'tanh', 'dropout': 0.3, 'layer1': 500, 'layer2': 50}
+SVM_RF performance on test for lbp
+Accuracy: 0.9902912621359223 Precision: 1.0 Recall: 0.9850746268656716
+MLP performance on test for lbp
+Accuracy: 0.970873786407767 Precision: 0.9705882352941176 Recall: 0.9850746268656716
