@@ -11,12 +11,14 @@ from image_alterations_detector.file_system.path_utilities import get_folder_pat
 
 
 class Mlp:
-    def __init__(self, feature_name):
+    def __init__(self, feature_name, epochs, batch_size):
+        self.epochs = epochs
+        self.batch_size = batch_size
         self.keras_clf = None
         self.input_shape = None
         self.feature_name = feature_name
 
-    def model_builder(self, input_shape_length, layer1=300, layer2=50, activation='tanh', dropout=0.2):
+    def model_builder(self, input_shape_length, layer1, layer2, activation, dropout):
         """ Initialize mlp
 
         :param input_shape_length: the dimension of the input
@@ -40,31 +42,38 @@ class Mlp:
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
 
-    def create_model(self, input_shape_length, layer1=300, layer2=50):
+    def create_model(self, input_shape_length, layer1, layer2, activation, dropout):
         self.keras_clf = KerasClassifier(self.model_builder, input_shape_length=input_shape_length, layer1=layer1,
-                                         layer2=layer2)
+                                         layer2=layer2, activation=activation, dropout=dropout)
 
-    def fit(self, x_train, y_train, epochs=200, batch_size=64):
+    def fit(self, x_train, y_train, grid_search, class_weight):
         print('Training MLP on', self.feature_name)
-        # grid search epochs, batch size and optimizer
-        activation = ['tanh', 'relu']
-        dropout = [0.2, 0.5]
-        layer1 = [100, 300, 500]
-        param_grid = dict(layer1=layer1, activation=activation, dropout=dropout)
-        grid = GridSearchCV(estimator=self.keras_clf, param_grid=param_grid, cv=5, return_train_score=False)
-        grid_result = grid.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
-        # Summarize results
-        print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-        self.keras_clf = grid.best_estimator_
+        if grid_search:
+            activation = ['tanh', 'relu']
+            dropout = [0.2, 0.5]
+            layer1 = [100, 300, 500]
+            layer2 = [10, 50, 100]
+            param_grid = dict(layer1=layer1, layer2=layer2, activation=activation, dropout=dropout)
+            grid = GridSearchCV(estimator=self.keras_clf, param_grid=param_grid, cv=5, return_train_score=False)
+            grid_result = grid.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=0,
+                                   class_weight=class_weight)
+            # Summarize results
+            print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+            self.keras_clf = grid.best_estimator_
+        else:
+            # Normal fit
+            self.keras_clf.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=0)
+            y_pred = self.keras_clf.predict(x_train)
+            print('MLP accuracy on train for{}:'.format(self.feature_name), accuracy_score(y_train, y_pred))
 
     def evaluate(self, x_test, y_test):
         y_pred = self.keras_clf.predict(x_test)
-        print('Evaluating SVM_RF performance on', self.feature_name)
-        print('Accuracy:', accuracy_score(y_test, y_pred))
-        print('Precision:', precision_score(y_test, y_pred), 'Recall:', recall_score(y_test, y_pred))
-        print('Confusion matrix:')
+        print('MLP performance on test for', self.feature_name)
+        print('Accuracy:', accuracy_score(y_test, y_pred), 'Precision:', precision_score(y_test, y_pred), 'Recall:',
+              recall_score(y_test, y_pred))
         cm = confusion_matrix(y_test, y_pred)
-        cm_display = ConfusionMatrixDisplay(cm).plot()
+        ConfusionMatrixDisplay(cm).plot()
+        plt.axis('off')
         plt.show()
 
     def predict(self, x_test):
