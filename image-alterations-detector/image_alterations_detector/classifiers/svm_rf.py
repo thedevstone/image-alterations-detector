@@ -2,8 +2,10 @@ import os
 
 import joblib
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, ConfusionMatrixDisplay, \
+    precision_recall_curve, PrecisionRecallDisplay, roc_curve, RocCurveDisplay
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 
@@ -49,9 +51,25 @@ class SvmRf:
         print('SVM_RF performance on test for', self.feature_name)
         print('Accuracy:', accuracy_score(y_test, y_pred), 'Precision:', precision_score(y_test, y_pred), 'Recall:',
               recall_score(y_test, y_pred))
+        # Confusion matrix
         cm = confusion_matrix(y_test, y_pred)
-        ConfusionMatrixDisplay(cm).plot()
-        plt.axis('off')
+        cm_display = ConfusionMatrixDisplay(cm)
+        # Precision recall
+        precision, recall, _ = precision_recall_curve(y_test, y_pred, pos_label=self.svm_rf.classes_[1])
+        pr_display = PrecisionRecallDisplay(precision=precision, recall=recall)
+        # Roc
+        fpr, tpr, _ = roc_curve(y_test, y_pred, pos_label=self.svm_rf.classes_[1])
+        roc_display = RocCurveDisplay(fpr=fpr, tpr=tpr)
+        # Figure
+        figure: Figure = plt.figure(1, figsize=(15, 6))
+        figure.suptitle('SVM + Random Forest on {}'.format(self.feature_name), fontsize=20)
+        (ax1, ax2, ax3) = figure.subplots(1, 3)
+        ax1.set_title('Confusion matrix')
+        cm_display.plot(ax=ax1)
+        ax2.set_title('Precision recall')
+        pr_display.plot(ax=ax2)
+        ax3.set_title('Roc curve')
+        roc_display.plot(ax=ax3)
         plt.show()
 
     def predict(self, x_test):
