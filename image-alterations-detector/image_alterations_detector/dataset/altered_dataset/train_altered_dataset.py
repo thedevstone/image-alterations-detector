@@ -22,7 +22,8 @@ def train_altered_descriptors():
     # Train on matrices
     print("Training on affine matrices")
     multi_clf_matrices = MlpSvmRf('affine matrices', svm_c=100, svm_kernel='linear', rf_max_depth=5)
-    multi_clf_matrices.create_model(x_train_matrices_descriptors.shape[1], 300, 50, 'tanh', 0.2)
+    multi_clf_matrices.create_model(x_train_matrices_descriptors.shape[1], layer1=100, layer2=100, activation='tanh',
+                                    dropout=0.5)
     multi_clf_matrices.fit(x_train_matrices_descriptors, y_train_matrices_descriptors, grid_search=True,
                            class_weight={0: class_weights_matrices[0], 1: class_weights_matrices[1]})
     # Evaluate and save
@@ -40,8 +41,8 @@ def train_altered_descriptors():
     print("Class weights lbp:", class_weights_lbp)
 
     # Train on lbp
-    multi_clf_lbp = MlpSvmRf('lbp', svm_c=1000, svm_kernel='linear', rf_max_depth=5)
-    multi_clf_lbp.create_model(x_train_lbp_descriptors.shape[1], 300, 50, 'tanh', 0.2)
+    multi_clf_lbp = MlpSvmRf('lbp', svm_c=1000, svm_kernel='linear', rf_max_depth=13)
+    multi_clf_lbp.create_model(x_train_lbp_descriptors.shape[1], layer1=300, layer2=100, activation='tanh', dropout=0.5)
     multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors, grid_search=True,
                       class_weight={0: class_weights_matrices[0], 1: class_weights_matrices[1]})
     # Evaluate and save

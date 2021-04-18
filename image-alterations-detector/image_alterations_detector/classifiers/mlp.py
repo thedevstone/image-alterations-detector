@@ -49,10 +49,10 @@ class Mlp:
     def fit(self, x_train, y_train, grid_search, class_weight):
         print('Training MLP on', self.feature_name)
         if grid_search:
-            activation = ['tanh', 'relu']
-            dropout = [0.2, 0.5]
+            activation = ['tanh']
+            dropout = [0.3, 0.5]
             layer1 = [100, 300, 500]
-            layer2 = [10, 50, 100]
+            layer2 = [50, 100, 150]
             param_grid = dict(layer1=layer1, layer2=layer2, activation=activation, dropout=dropout)
             grid = GridSearchCV(estimator=self.keras_clf, param_grid=param_grid, cv=5, return_train_score=False)
             grid_result = grid.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=0,

@@ -28,9 +28,10 @@ class SvmRf:
         if grid_search:
             # GRID SEARCH
             # Use the key for the classifier followed by __ and the attribute
-            param_grid = [{'svm__kernel': ['rbf'], 'svm__gamma': [1e-3, 1e-4], 'svm__C': [1, 10, 100, 1000],
-                           'rf__max_depth': [5, 7, 9, 11, 13]},
-                          {'svm__kernel': ['linear'], 'svm__C': [1, 10, 100, 1000], 'rf__max_depth': [5, 7, 9, 11, 13]}
+            param_grid = [{'svm__kernel': ['rbf'], 'svm__gamma': [1e-3, 1e-4], 'svm__C': [10, 100, 1000],
+                           'rf__max_depth': [5, 7, 9, 11, 13, 15]},
+                          {'svm__kernel': ['linear'], 'svm__C': [10, 100, 1000, 10000],
+                           'rf__max_depth': [5, 7, 9, 11, 13, 15]}
                           ]
             grid = GridSearchCV(estimator=self.svm_rf, param_grid=param_grid, cv=5, return_train_score=False)
             grid_result = grid.fit(x_train, y_train)
