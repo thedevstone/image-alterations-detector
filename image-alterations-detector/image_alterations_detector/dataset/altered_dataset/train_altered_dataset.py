@@ -7,10 +7,8 @@ from image_alterations_detector.dataset.altered_dataset.altered_descriptors impo
 
 def train_altered_descriptors():
     dataset_path = '/Users/luca/Desktop/altered'
-    mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(dataset_path, 3)
+    mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(dataset_path)
 
-    # descriptors: np.ndarray = np.column_stack([matrices_descriptors, lbp_descriptors])
-    # print("Big descriptor shape:", descriptors.shape)
     print("Matrices shape:", matrices_descriptors.shape)
     x_train_matrices_descriptors, x_test_matrices_descriptors, y_train_matrices_descriptors, y_test_matrices_descriptors = train_test_split(
         matrices_descriptors,

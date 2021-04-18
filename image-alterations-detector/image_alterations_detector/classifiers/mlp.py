@@ -40,7 +40,7 @@ class Mlp:
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         return model
 
-    def create_model(self, input_shape_length, layer1=300, layer2=50, layer3=None):
+    def create_model(self, input_shape_length, layer1=300, layer2=50):
         self.keras_clf = KerasClassifier(self.model_builder, input_shape_length=input_shape_length, layer1=layer1,
                                          layer2=layer2)
 
@@ -55,8 +55,7 @@ class Mlp:
         grid_result = grid.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, verbose=0)
         # Summarize results
         print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-        # for params, mean_score, scores in grid_result:
-        #     print("%f (%f) with: %r" % (scores.mean(), scores.std(), params))
+        self.keras_clf = grid.best_estimator_
 
     def evaluate(self, x_test, y_test):
         y_pred = self.keras_clf.predict(x_test)
@@ -66,7 +65,6 @@ class Mlp:
         print('Confusion matrix:')
         cm = confusion_matrix(y_test, y_pred)
         cm_display = ConfusionMatrixDisplay(cm).plot()
-        plt.imshow(cm_display)
         plt.show()
 
     def predict(self, x_test):

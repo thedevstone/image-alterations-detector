@@ -10,8 +10,8 @@ class MlpSvmRf:
         self.svm_rf = SvmRf(self.feature_name)
         self.mlp = Mlp(self.feature_name)
 
-    def create_model(self, input_shape_length, layer1=300, layer2=50, layer3=None):
-        self.mlp.create_model(input_shape_length, layer1, layer2, layer3)
+    def create_model(self, input_shape_length, layer1=300, layer2=50):
+        self.mlp.create_model(input_shape_length, layer1, layer2)
 
     def fit(self, x_train, y_train, epochs=500, batch_size=32):
         self.mlp.fit(x_train, y_train, epochs=epochs, batch_size=batch_size)
