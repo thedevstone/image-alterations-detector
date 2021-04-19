@@ -25,15 +25,15 @@ class Mlp:
         self.model.add(Dense(layer1, input_shape=self.input_shape))
         self.model.add(BatchNormalization())
         self.model.add(Dropout(dropout))
-
-        self.model.add(Dense(layer2, activation=activation))
-        self.model.add(BatchNormalization())
-        self.model.add(Dropout(dropout))
+        if layer2 is not None:
+            self.model.add(Dense(layer2, activation=activation))
+            self.model.add(BatchNormalization())
+            self.model.add(Dropout(dropout))
 
         self.model.add(Dense(1, activation='sigmoid'))
         self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    def fit(self, x_train, y_train, class_weight):
+    def fit(self, x_train, y_train, class_weight, grid_search=False):
         print('Training MLP on', self.feature_name)
         self.model.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=0,
                        class_weight=class_weight)

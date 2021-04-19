@@ -13,9 +13,9 @@ class MlpSvmRf:
     def create_model(self, input_shape_length, layer1, layer2, activation, dropout):
         self.mlp.create_model(input_shape_length, layer1=layer1, layer2=layer2, activation=activation, dropout=dropout)
 
-    def fit(self, x_train, y_train, grid_search, class_weight):
+    def fit(self, x_train, y_train, class_weight, grid_search):
         self.svm_rf.fit(x_train, y_train, grid_search)
-        self.mlp.fit(x_train, y_train, grid_search, class_weight)
+        self.mlp.fit(x_train, y_train, class_weight, grid_search)
 
     def evaluate(self, x_test, y_test):
         self.svm_rf.evaluate(x_test, y_test)
