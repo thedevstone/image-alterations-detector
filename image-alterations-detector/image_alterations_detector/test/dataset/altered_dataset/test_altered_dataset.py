@@ -23,7 +23,9 @@ if __name__ == '__main__':
     multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.load_models('lbp')
 
-    matrix_result = multi_clf_matrices.predict_one(descriptor1_14_matrix)
-    matrix_result_beauty = multi_clf_matrices.predict_one(descriptor1_c_matrix)
-    print(matrix_result)
-    print(matrix_result_beauty)
+    matrix_result_1_14 = multi_clf_matrices.predict_one(descriptor1_14_matrix)
+    lbp_result_1_14 = multi_clf_lbp.predict_one(descriptor1_14_lbp)
+    print("1 - 14 result:", matrix_result_1_14, lbp_result_1_14)
+    matrix_result_1_c = multi_clf_matrices.predict_one(descriptor1_c_matrix)
+    lbp_result_1_c = multi_clf_lbp.predict_one(descriptor1_c_lbp)
+    print("1 - c result:", matrix_result_1_c, lbp_result_1_c)

@@ -8,10 +8,12 @@ if __name__ == '__main__':
     print('Testing on images')
     img1 = cv2.imread(get_image_path('test_luca1.jpg'))
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-    img2 = cv2.imread(get_image_path('test_luca1_beauty.jpeg'))
+    img2 = cv2.imread(get_image_path('test_luca2.jpg'))
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
+    img3 = cv2.imread(get_image_path('test_luca1_liquify.png'))
+    img3 = cv2.cvtColor(img3, cv2.COLOR_BGR2RGB)
     descriptor1_2_area, descriptor1_2_matrix, descriptor1_2_lbp = compute_two_image_descriptors(img1, img2)
-
+    descriptor1_3_area, descriptor1_3_matrix, descriptor1_3_lbp = compute_two_image_descriptors(img1, img3)
     # Load affine matrices model
     multi_clf_matrices = MlpSvmRf('affine_matrices')
     multi_clf_matrices.load_models('affine_matrices')
@@ -19,7 +21,9 @@ if __name__ == '__main__':
     multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.load_models('lbp')
 
-    matrix_result = multi_clf_matrices.predict_one(descriptor1_2_matrix)
-    matrix_result_beauty = multi_clf_lbp.predict_one(descriptor1_2_lbp)
-    print(matrix_result)
-    print(matrix_result_beauty)
+    matrix_result_1_2 = multi_clf_matrices.predict_one(descriptor1_2_matrix)
+    lbp_result_1_2 = multi_clf_lbp.predict_one(descriptor1_2_lbp)
+    print("1 - 2 result:", matrix_result_1_2, lbp_result_1_2)
+    matrix_result_1_3 = multi_clf_matrices.predict_one(descriptor1_3_matrix)
+    lbp_result_1_3 = multi_clf_lbp.predict_one(descriptor1_3_lbp)
+    print("1 - 3 result:", matrix_result_1_3, lbp_result_1_3)
