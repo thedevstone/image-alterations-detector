@@ -12,15 +12,16 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
     compute_mean_triangles_area_differences_descriptor
 from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
 from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
-from image_alterations_detector.face_morphology.landmarks_prediction.landmark_predictor import LandmarkPredictor
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
     triangulation_indexes_to_points
 from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
+AFFINE_MATRICES_DIM = 678
+LBP_DIM = 52
+
 
 def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    extractor = LandmarkPredictor()
     detector = FaceDetector()
     aligner = FaceAligner(desired_face_width=512)
     # Descriptor

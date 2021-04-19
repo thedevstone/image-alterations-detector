@@ -13,14 +13,18 @@ from image_alterations_detector.file_system.path_utilities import get_folder_pat
 
 
 class SvmRf:
-    def __init__(self, feature_name, svm_c, svm_kernel, rf_max_depth):
+    def __init__(self, feature_name):
         """ Create a multi-classifier with SVM and Random Forest
 
         """
         self.feature_name = feature_name
+        self.svm = None
+        self.rf = None
+        self.svm_rf = None
+
+    def create_model(self, svm_c, svm_kernel, rf_max_depth):
         self.svm = SVC(probability=True, C=svm_c, kernel=svm_kernel, class_weight='balanced')
-        self.rf = RandomForestClassifier(random_state=0, max_depth=rf_max_depth,
-                                         class_weight='balanced')
+        self.rf = RandomForestClassifier(random_state=0, max_depth=rf_max_depth, class_weight='balanced')
         self.svm_rf = VotingClassifier(estimators=[('svm', self.svm), ('rf', self.rf)],
                                        voting='soft', weights=[1, 1], flatten_transform=True, n_jobs=-1)
 

@@ -17,13 +17,10 @@ if __name__ == '__main__':
     print(descriptor1_c_matrix.shape, descriptor1_c_lbp.shape)
 
     # Load affine matrices model
-    multi_clf_matrices = MlpSvmRf('affine_matrices', svm_c=1000, svm_kernel='linear', rf_max_depth=5)
-    multi_clf_matrices.create_model(descriptor1_14_matrix.shape[1], layer1=100, layer2=50, activation='tanh',
-                                    dropout=0.5)
+    multi_clf_matrices = MlpSvmRf('affine_matrices')
     multi_clf_matrices.load_models('affine_matrices')
     # Load lbp model
-    multi_clf_lbp = MlpSvmRf('lbp', svm_c=10000, svm_kernel='linear', rf_max_depth=5)
-    multi_clf_lbp.create_model(descriptor1_14_lbp.shape[1], layer1=10, layer2=None, activation='tanh', dropout=0.3)
+    multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.load_models('lbp')
 
     matrix_result = multi_clf_matrices.predict_one(descriptor1_14_matrix)

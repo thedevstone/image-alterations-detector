@@ -33,7 +33,7 @@ class Mlp:
         self.model.add(Dense(1, activation='sigmoid'))
         self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    def fit(self, x_train, y_train, class_weight, grid_search=False):
+    def fit(self, x_train, y_train, class_weight):
         print('Training MLP on', self.feature_name)
         self.model.fit(x_train, y_train, epochs=self.epochs, batch_size=self.batch_size, verbose=0,
                        class_weight=class_weight)

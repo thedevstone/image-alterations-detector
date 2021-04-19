@@ -5,17 +5,18 @@ from image_alterations_detector.classifiers.svm_rf import SvmRf
 
 
 class MlpSvmRf:
-    def __init__(self, feature_name, svm_c, svm_kernel, rf_max_depth, epochs=500, batch_size=64):
+    def __init__(self, feature_name, epochs=500, batch_size=64):
         self.feature_name = feature_name
-        self.svm_rf = SvmRf(self.feature_name, svm_c, svm_kernel, rf_max_depth)
+        self.svm_rf = SvmRf(self.feature_name)
         self.mlp = Mlp(self.feature_name, epochs=epochs, batch_size=batch_size)
 
-    def create_model(self, input_shape_length, layer1, layer2, activation, dropout):
+    def create_model(self, svm_c, svm_kernel, rf_max_depth, input_shape_length, layer1, layer2, activation, dropout):
         self.mlp.create_model(input_shape_length, layer1=layer1, layer2=layer2, activation=activation, dropout=dropout)
+        self.svm_rf.create_model(svm_c, svm_kernel, rf_max_depth)
 
     def fit(self, x_train, y_train, class_weight, grid_search):
         self.svm_rf.fit(x_train, y_train, grid_search)
-        self.mlp.fit(x_train, y_train, class_weight, grid_search)
+        self.mlp.fit(x_train, y_train, class_weight)
 
     def evaluate(self, x_test, y_test):
         self.svm_rf.evaluate(x_test, y_test)
