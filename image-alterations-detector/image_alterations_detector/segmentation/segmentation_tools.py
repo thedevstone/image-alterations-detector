@@ -2,7 +2,6 @@ from typing import List, Tuple
 
 import numpy as np
 import tensorflow as tf
-from
 
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 from image_alterations_detector.file_system.path_utilities import get_model_path
