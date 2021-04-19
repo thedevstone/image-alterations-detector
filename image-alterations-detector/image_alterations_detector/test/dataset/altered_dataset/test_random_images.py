@@ -6,9 +6,9 @@ from image_alterations_detector.file_system.path_utilities import get_image_path
 
 if __name__ == '__main__':
     print('Testing on images')
-    img1 = cv2.imread(get_image_path('test_luca1.jpg'))
+    img1 = cv2.imread(get_image_path('test_luca2.jpg'))
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
-    img2 = cv2.imread(get_image_path('test_luca2.jpg'))
+    img2 = cv2.imread(get_image_path('test_luca1_beauty.jpeg'))
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
     img3 = cv2.imread(get_image_path('test_luca1_liquify.png'))
     img3 = cv2.cvtColor(img3, cv2.COLOR_BGR2RGB)
