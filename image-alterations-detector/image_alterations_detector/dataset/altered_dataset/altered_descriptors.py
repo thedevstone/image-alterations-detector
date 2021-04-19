@@ -9,7 +9,7 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import \
     compute_face_lbp_difference
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
-    compute_mean_triangles_area_differences_descriptor
+    compute_mean_triangles_area_differences_descriptor, compute_mean_triangles_angles_distances_descriptor
 from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
 from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
@@ -17,11 +17,12 @@ from image_alterations_detector.face_morphology.landmarks_triangulation.conversi
 from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
+ANGLES_DIM = 339
 AFFINE_MATRICES_DIM = 678
 LBP_DIM = 52
 
 
-def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     detector = FaceDetector()
     aligner = FaceAligner(desired_face_width=512)
     # Descriptor
@@ -35,22 +36,27 @@ def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray,
     source_image_landmarks = triangulation_indexes_to_points(source_image_landmarks, triangles_indexes)
     dest_image_landmarks = triangulation_indexes_to_points(dest_image_landmarks, triangles_indexes)  # repeated
     # Descriptors
+    angles = compute_mean_triangles_angles_distances_descriptor(source_image_landmarks, dest_image_landmarks)
     mean_area = compute_mean_triangles_area_differences_descriptor(source_image_landmarks, dest_image_landmarks)
     affine_matrices = compute_affine_matrices_descriptor(source_image_landmarks, dest_image_landmarks)
     lbp = compute_face_lbp_difference(source_image, dest_image, detector, lbp)
+    # Convert to float
+    angles = np.array(angles).astype('float32')
     mean_area = np.array(mean_area).astype('float32')
     affine_matrices = np.array(affine_matrices).astype('float32')
     lbp = np.array(lbp).astype('float32')
     # Normalize
+    angles_descriptor = normalize(np.expand_dims(angles, 0), norm='max')
     mean_area_descriptors = normalize(np.expand_dims(mean_area, 0), norm='max')
     matrices_descriptors = normalize(np.expand_dims(affine_matrices, 0), norm='max')
     lbp_descriptors = normalize(np.expand_dims(lbp, 0), norm='max')
-    return mean_area_descriptors, matrices_descriptors, lbp_descriptors
+    return angles_descriptor, mean_area_descriptors, matrices_descriptors, lbp_descriptors
 
 
 def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
-                                                                            np.ndarray]:
+                                                                            np.ndarray, np.ndarray]:
     # Descriptors
+    angles_descriptors = []
     mean_area_descriptors = []
     matrices_descriptors = []
     lbp_descriptors = []
@@ -90,6 +96,22 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
         img_beauty_a_tri_points = triangulation_indexes_to_points(img_beauty_a_points, triangles_indexes)
         img_beauty_b_tri_points = triangulation_indexes_to_points(img_beauty_b_points, triangles_indexes)
         img_beauty_c_tri_points = triangulation_indexes_to_points(img_beauty_c_points, triangles_indexes)
+        # Compute angles
+        angles_difference1_14 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                   img_genuine_14_tri_points)
+        angles_difference1_5 = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                  img_genuine_5_tri_points)
+        angles_difference1_a = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                  img_beauty_a_tri_points)
+        angles_difference1_b = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                  img_beauty_b_tri_points)
+        angles_difference1_c = compute_mean_triangles_angles_distances_descriptor(img_genuine_1_tri_points,
+                                                                                  img_beauty_c_tri_points)
+
+        angles_descriptors.extend(
+            [angles_difference1_14, angles_difference1_5, angles_difference1_a, angles_difference1_b,
+             angles_difference1_c])
+
         # Compute mean area
         mean_area_difference1_14 = compute_mean_triangles_area_differences_descriptor(img_genuine_1_tri_points,
                                                                                       img_genuine_14_tri_points)
@@ -104,6 +126,7 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
         mean_area_descriptors.extend(
             [mean_area_difference1_14, mean_area_difference1_5, mean_area_difference1_a, mean_area_difference1_b,
              mean_area_difference1_c])
+
         # Matrix distances
         affine_matrices_distances1_14 = compute_affine_matrices_descriptor(img_genuine_1_tri_points,
                                                                            img_genuine_14_tri_points)
@@ -130,6 +153,7 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
         # Setting labels
         labels.extend([0, 0, 1, 1, 1])
 
+    angles_descriptors = np.array(angles_descriptors).astype('float32')
     mean_area_descriptors = np.array(mean_area_descriptors).astype('float32')
     matrices_descriptors = np.array(matrices_descriptors).astype('float32')
     lbp_descriptors = np.array(lbp_descriptors).astype('float32')
@@ -137,8 +161,9 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
     labels = np.array(labels)
 
     # Normalize
+    angles_descriptors = normalize(angles_descriptors, norm='max')
     mean_area_descriptors = normalize(mean_area_descriptors, norm='max')
     matrices_descriptors = normalize(matrices_descriptors, norm='max')
     lbp_descriptors = normalize(lbp_descriptors, norm='max')
 
-    return mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels
+    return angles_descriptors, mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels

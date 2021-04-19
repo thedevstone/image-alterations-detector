@@ -1,7 +1,6 @@
 from math import sqrt
 
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 
 from image_alterations_detector.descriptors.triangle_descriptors.triangle_descriptors import compute_triangle_area, \
     compute_triangle_centroid, compute_triangle_angles
@@ -59,7 +58,7 @@ def compute_mean_triangles_angles_distances_descriptor(source_triangles_points: 
     :param dest_triangles_points: numpy dest array of triangles
     :return: the mean angles distances rounded to second decimal
     """
-    cosine_distances = []
+    angle_differences = []
     source_triangle_number = len(source_triangles_points)
     dest_triangle_number = len(dest_triangles_points)
     if source_triangle_number != dest_triangle_number:
@@ -67,7 +66,6 @@ def compute_mean_triangles_angles_distances_descriptor(source_triangles_points: 
     for t1, t2 in zip(source_triangles_points, dest_triangles_points):
         tri_angles1 = compute_triangle_angles(t1)
         tri_angles2 = compute_triangle_angles(t2)
-        similarity = cosine_similarity([tri_angles1], [tri_angles2])[0][0]
-        cosine_distance = 1 - similarity
-        cosine_distances.append(cosine_distance)
-    return np.array(cosine_distances)
+        diff = np.abs(tri_angles1 - tri_angles2)
+        angle_differences.append(diff)
+    return np.array(angle_differences).flatten()
