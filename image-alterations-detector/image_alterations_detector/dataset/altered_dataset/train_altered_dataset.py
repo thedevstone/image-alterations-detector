@@ -1,10 +1,15 @@
+import os
+
+import joblib
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import compute_class_weight
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
 from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_altered_descriptors, \
     AFFINE_MATRICES_DIM, LBP_DIM, ANGLES_DIM
+from image_alterations_detector.file_system.path_utilities import get_folder_path_from_root
 
 
 def train_altered_descriptors():
@@ -12,14 +17,18 @@ def train_altered_descriptors():
     angles_descriptors, mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(
         dataset_path)
 
-    print("Angles shape:", angles_descriptors.shape)
-    x_train_angles_descriptors, x_test_angles_descriptors, y_train_angles_descriptors, y_test_angles_descriptors \
-        = train_test_split(angles_descriptors, labels, test_size=0.2, random_state=23)
     # Class weights
     class_weight = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
     print("Class weights angles:", class_weight)
 
-    # Train on matrices
+    # Training on angles
+    print("Angles shape:", angles_descriptors.shape)
+    x_train_angles_descriptors, x_test_angles_descriptors, y_train_angles_descriptors, y_test_angles_descriptors \
+        = train_test_split(angles_descriptors, labels, test_size=0.2, random_state=23)
+    # Min max
+    angles_scaler = MinMaxScaler()
+    x_train_angles_descriptors = angles_scaler.fit_transform(x_train_angles_descriptors)
+    x_test_angles_descriptors = angles_scaler.transform(x_test_angles_descriptors)
     print("Training on angles")
     multi_clf_angles = MlpSvmRf('angles')
     multi_clf_angles.create_model(svm_c=1000, svm_kernel='linear', rf_max_depth=5,
@@ -34,6 +43,10 @@ def train_altered_descriptors():
     print("Matrices shape:", matrices_descriptors.shape)
     x_train_matrices_descriptors, x_test_matrices_descriptors, y_train_matrices_descriptors, y_test_matrices_descriptors \
         = train_test_split(matrices_descriptors, labels, test_size=0.2, random_state=23)
+    # Min max
+    matrices_scaler = MinMaxScaler()
+    x_train_matrices_descriptors = matrices_scaler.fit_transform(x_train_matrices_descriptors)
+    x_test_matrices_descriptors = matrices_scaler.transform(x_test_matrices_descriptors)
     # Train on matrices
     print("Training on affine matrices")
     multi_clf_matrices = MlpSvmRf('affine_matrices')
@@ -49,6 +62,10 @@ def train_altered_descriptors():
     print("LBP shape:", lbp_descriptors.shape)
     x_train_lbp_descriptors, x_test_lbp_descriptors, y_train_lbp_descriptors, y_test_lbp_descriptors = \
         train_test_split(lbp_descriptors, labels, test_size=0.2, random_state=23)
+    # Min max
+    lbp_scaler = MinMaxScaler()
+    x_train_lbp_descriptors = lbp_scaler.fit_transform(x_train_lbp_descriptors)
+    x_test_lbp_descriptors = lbp_scaler.transform(x_test_lbp_descriptors)
     # Train on lbp
     multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.create_model(svm_c=10000, svm_kernel='linear', rf_max_depth=5,
@@ -58,6 +75,11 @@ def train_altered_descriptors():
     # Evaluate and save
     multi_clf_lbp.evaluate(x_test_lbp_descriptors, y_test_lbp_descriptors)
     multi_clf_lbp.save_models()
+
+    # Save scalers
+    joblib.dump(angles_scaler, os.path.join(get_folder_path_from_root('models'), 'angles_scaler.pkl'))
+    joblib.dump(matrices_scaler, os.path.join(get_folder_path_from_root('models'), 'matrices_scaler.pkl'))
+    joblib.dump(lbp_scaler, os.path.join(get_folder_path_from_root('models'), 'lbp_scaler.pkl'))
 
 
 if __name__ == '__main__':

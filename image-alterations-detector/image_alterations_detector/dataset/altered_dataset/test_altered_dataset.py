@@ -1,20 +1,29 @@
 import cv2
+import joblib
+from sklearn.preprocessing import MinMaxScaler
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
 from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_two_image_descriptors
-from image_alterations_detector.file_system.path_utilities import get_image_path
+from image_alterations_detector.file_system.path_utilities import get_image_path, get_model_path
 
 
 def test_two_images(img1, img2):
     descriptor1_2_angles, descriptor1_2_area, descriptor1_2_matrix, descriptor1_2_lbp = compute_two_image_descriptors(
         img1, img2)
+
     # Load angles model
+    angles_scaler: MinMaxScaler = joblib.load(get_model_path('angles_scaler.pkl'))
+    descriptor1_2_angles = angles_scaler.transform(descriptor1_2_angles)
     multi_clf_angles = MlpSvmRf('angles')
     multi_clf_angles.load_models('angles')
     # Load affine matrices model
+    matrices_scaler: MinMaxScaler = joblib.load(get_model_path('matrices_scaler.pkl'))
+    descriptor1_2_matrix = matrices_scaler.transform(descriptor1_2_matrix)
     multi_clf_matrices = MlpSvmRf('affine_matrices')
     multi_clf_matrices.load_models('affine_matrices')
     # Load lbp model
+    lbp_scaler: MinMaxScaler = joblib.load(get_model_path('lbp_scaler.pkl'))
+    descriptor1_2_lbp = lbp_scaler.transform(descriptor1_2_lbp)
     multi_clf_lbp = MlpSvmRf('lbp')
     multi_clf_lbp.load_models('lbp')
 

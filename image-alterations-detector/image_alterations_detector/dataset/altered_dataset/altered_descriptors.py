@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import numpy as np
-from sklearn.preprocessing import normalize
 
 from image_alterations_detector.dataset.altered_dataset.altered_dataset_utils import load_altered_dataset
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.shape_transform_descriptor import \
@@ -45,12 +44,7 @@ def compute_two_image_descriptors(source_image, dest_image) -> Tuple[np.ndarray,
     mean_area = np.array(mean_area).astype('float32')
     affine_matrices = np.array(affine_matrices).astype('float32')
     lbp = np.array(lbp).astype('float32')
-    # Normalize
-    angles_descriptor = normalize(np.expand_dims(angles, 0), norm='max')
-    mean_area_descriptors = normalize(np.expand_dims(mean_area, 0), norm='max')
-    matrices_descriptors = normalize(np.expand_dims(affine_matrices, 0), norm='max')
-    lbp_descriptors = normalize(np.expand_dims(lbp, 0), norm='max')
-    return angles_descriptor, mean_area_descriptors, matrices_descriptors, lbp_descriptors
+    return angles, mean_area, affine_matrices, lbp
 
 
 def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
@@ -159,11 +153,4 @@ def compute_altered_descriptors(dataset_path, images_to_load=None) -> Tuple[np.n
     lbp_descriptors = np.array(lbp_descriptors).astype('float32')
     # Convert labels
     labels = np.array(labels)
-
-    # Normalize
-    angles_descriptors = normalize(angles_descriptors, norm='max')
-    mean_area_descriptors = normalize(mean_area_descriptors, norm='max')
-    matrices_descriptors = normalize(matrices_descriptors, norm='max')
-    lbp_descriptors = normalize(lbp_descriptors, norm='max')
-
     return angles_descriptors, mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels

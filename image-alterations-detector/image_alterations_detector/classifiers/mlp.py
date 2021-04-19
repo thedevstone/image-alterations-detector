@@ -42,7 +42,7 @@ class Mlp:
                        class_weight=class_weight)
         y_pred = self.model.predict(x_train)
         y_pred = [1 * (x[0] >= 0.5) for x in y_pred]
-        print('MLP accuracy on train for{}:'.format(self.feature_name), accuracy_score(y_train, y_pred))
+        print('MLP accuracy on train for {}:'.format(self.feature_name), accuracy_score(y_train, y_pred))
 
     def evaluate(self, x_test, y_test):
         y_pred = self.model.predict(x_test)
