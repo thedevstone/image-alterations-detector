@@ -11,9 +11,11 @@ if __name__ == '__main__':
     controlled_Img = genuine[2][image_index]
     beauty_img = beauty[2][image_index]
 
-    print(test_two_images(genuine_img, controlled_Img))
-    print(test_two_images(genuine_img, beauty_img))
+    print('Genuine -> Controlled', test_two_images(genuine_img, controlled_Img))
+    print('Genuine -> Beauty', test_two_images(genuine_img, beauty_img))
 
     print('Test extra dataset')
-    print(test_on_extra_dataset_images('test_luca1.jpg', 'test_luca2.jpg'))
-    print(test_on_extra_dataset_images('img1.jpg', 'img2.jpg'))
+    print('Genuine -> Genuine', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca1.jpg'))
+    print('Genuine -> Genuine liquified', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca1_liquify.png'))
+    print('Genuine -> Different pose', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca2.jpg'))
+    print('Genuine -> Beauty', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca1_beauty.jpeg'))

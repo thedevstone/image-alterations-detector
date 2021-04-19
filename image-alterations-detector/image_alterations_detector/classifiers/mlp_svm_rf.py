@@ -1,5 +1,3 @@
-import numpy as np
-
 from image_alterations_detector.classifiers.mlp import Mlp
 from image_alterations_detector.classifiers.svm_rf import SvmRf
 
@@ -23,9 +21,9 @@ class MlpSvmRf:
         self.mlp.evaluate(x_test, y_test)
 
     def predict_one(self, x_test):
-        svm_rf_predicted = self.svm_rf.predict(x_test)
-        mlp_predicted = self.mlp.predict(x_test)
-        return np.array([svm_rf_predicted[0], mlp_predicted[0]])
+        svm_rf_predicted = self.svm_rf.predict(x_test)[0][1]
+        mlp_predicted = self.mlp.predict(x_test)[0][0]
+        return self.feature_name, round(svm_rf_predicted, 2), round(mlp_predicted, 2)
 
     def save_models(self):
         self.svm_rf.save('{}-svm_rf.pkl'.format(self.feature_name))

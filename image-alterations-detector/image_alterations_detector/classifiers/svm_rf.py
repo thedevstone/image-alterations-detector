@@ -79,7 +79,7 @@ class SvmRf:
         plt.show()
 
     def predict(self, x_test):
-        predicted = self.svm_rf.predict(x_test)
+        predicted = self.svm_rf.predict_proba(x_test)
         return predicted
 
     def save(self, file_name):
