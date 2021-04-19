@@ -5,6 +5,8 @@ from sklearn.preprocessing import minmax_scale
 
 from image_alterations_detector.descriptors.triangle_descriptors.triangle_descriptors import \
     compute_triangle_affine_matrix
+from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
+    visualize_facial_landmarks_points
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
     triangulation_indexes_to_points
 from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
@@ -22,9 +24,9 @@ def draw_delaunay_alterations(source_image, dest_image, animate=True) -> np.ndar
     dest_image_landmarks = triangulation_indexes_to_points(dest_image_landmarks, triangles_indexes)
     # Sort triangles
     t1s, t2s = sort_altered_triangles(source_image_landmarks, dest_image_landmarks)
-    # Find points coordinates
     # Output image
     source_out = source_image.copy()
+    source_out = visualize_facial_landmarks_points(source_out, source_image_landmarks)
     import colorsys
 
     for idx, t in enumerate(t1s):
@@ -42,7 +44,7 @@ def draw_delaunay_alterations(source_image, dest_image, animate=True) -> np.ndar
 
         if animate:
             cv2.imshow('Delaunay', cv2.cvtColor(source_out, cv2.COLOR_BGR2RGB))
-            cv2.waitKey(300)
+            cv2.waitKey(200)
     plt.imshow(source_out)
     plt.show()
     return source_out
