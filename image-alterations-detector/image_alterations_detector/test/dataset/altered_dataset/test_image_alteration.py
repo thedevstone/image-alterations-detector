@@ -23,7 +23,7 @@ if __name__ == '__main__':
     print('Genuine -> Different pose', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca2.jpg'))
     print('Genuine -> Beauty', test_on_extra_dataset_images('test_luca1.jpg', 'test_luca1_beauty.jpeg'))
 
-    delaunay_genuine_controlled = draw_delaunay_alterations(genuine_img, controlled_Img)
-    delaunay_genuine_beauty = draw_delaunay_alterations(genuine_img, beauty_img)
+    delaunay_genuine_controlled = draw_delaunay_alterations(genuine_img, controlled_Img, False)
+    delaunay_genuine_beauty = draw_delaunay_alterations(genuine_img, beauty_img, False)
     get_images_mosaic_with_label('Delaunay', [(delaunay_genuine_controlled, 'Genuine -> Controlled'),
                                               (delaunay_genuine_beauty, 'Genuine -> Beauty')], 1, 2)
