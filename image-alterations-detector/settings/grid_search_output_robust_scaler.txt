@@ -1,0 +1,33 @@
+Class weights angles: [1.25       0.83333333]
+Angles shape: (515, 339)
+Training on angles
+Training SVM_RF on angles
+Best: 0.653041 using {'rf__max_depth': 5, 'svm__C': 10, 'svm__gamma': 0.0001, 'svm__kernel': 'rbf'}
+Training MLP on angles
+2021-04-20 13:05:53.740595: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+MLP accuracy on train for angles: 1.0
+SVM_RF performance on test for angles
+Accuracy: 0.7572815533980582 Precision: 0.75 Recall: 0.9402985074626866
+MLP performance on test for angles
+Accuracy: 0.6310679611650486 Precision: 0.7301587301587301 Recall: 0.6865671641791045
+Matrices shape: (515, 678)
+Training on affine matrices
+Training SVM_RF on affine_matrices
+Best: 0.793535 using {'rf__max_depth': 5, 'svm__C': 1000, 'svm__gamma': 0.001, 'svm__kernel': 'rbf'}
+Training MLP on affine_matrices
+MLP accuracy on train for affine_matrices: 0.6699029126213593
+SVM_RF performance on test for affine_matrices
+Accuracy: 0.7961165048543689 Precision: 0.8108108108108109 Recall: 0.8955223880597015
+MLP performance on test for affine_matrices
+Accuracy: 0.5631067961165048 Precision: 0.6774193548387096 Recall: 0.6268656716417911
+LBP shape: (515, 52)
+Training SVM_RF on lbp
+Best: 0.900558 using {'rf__max_depth': 13, 'svm__C': 100, 'svm__gamma': 0.001, 'svm__kernel': 'rbf'}
+Training MLP on lbp
+MLP accuracy on train for lbp: 0.9975728155339806
+SVM_RF performance on test for lbp
+Accuracy: 0.9029126213592233 Precision: 0.9384615384615385 Recall: 0.9104477611940298
+MLP performance on test for lbp
+Accuracy: 0.9029126213592233 Precision: 0.9253731343283582 Recall: 0.9253731343283582
+
+Process finished with exit code 0

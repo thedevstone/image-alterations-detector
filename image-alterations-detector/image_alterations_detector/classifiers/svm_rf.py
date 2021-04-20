@@ -23,7 +23,7 @@ class SvmRf:
         self.svm_rf = None
 
     def create_model(self, svm_c, svm_kernel, rf_max_depth):
-        self.svm = SVC(probability=True, C=svm_c, kernel=svm_kernel, gamma='auto', class_weight='balanced')
+        self.svm = SVC(probability=True, C=svm_c, kernel=svm_kernel, gamma='auto', class_weight='balanced', max_iter=100000)
         self.rf = RandomForestClassifier(random_state=0, max_depth=rf_max_depth, class_weight='balanced')
         self.svm_rf = VotingClassifier(estimators=[('svm', self.svm), ('rf', self.rf)],
                                        voting='soft', weights=[1, 1], flatten_transform=True, n_jobs=-1)
