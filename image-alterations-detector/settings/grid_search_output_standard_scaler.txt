@@ -1,0 +1,31 @@
+Class weights angles: [1.25       0.83333333]
+Angles shape: (515, 339)
+Training on angles
+Training SVM_RF on angles
+Best: 0.682222 using {'rf__max_depth': 7, 'svm__C': 10, 'svm__gamma': 0.0001, 'svm__kernel': 'rbf'}
+Training MLP on angles
+MLP accuracy on train for angles: 1.0
+SVM_RF performance on test for angles
+Accuracy: 0.7281553398058253 Precision: 0.782608695652174 Recall: 0.8059701492537313
+MLP performance on test for angles
+Accuracy: 0.6504854368932039 Precision: 0.7313432835820896 Recall: 0.7313432835820896
+Matrices shape: (515, 678)
+Training on affine matrices
+Training SVM_RF on affine_matrices
+Best: 0.851895 using {'rf__max_depth': 7, 'svm__C': 10, 'svm__gamma': 0.0001, 'svm__kernel': 'rbf'}
+Training MLP on affine_matrices
+MLP accuracy on train for affine_matrices: 1.0
+SVM_RF performance on test for affine_matrices
+Accuracy: 0.8543689320388349 Precision: 0.90625 Recall: 0.8656716417910447
+MLP performance on test for affine_matrices
+Accuracy: 0.8640776699029126 Precision: 0.9344262295081968 Recall: 0.8507462686567164
+LBP shape: (515, 52)
+Training SVM_RF on lbp
+Best: 0.905378 using {'rf__max_depth': 13, 'svm__C': 100, 'svm__gamma': 0.001, 'svm__kernel': 'rbf'}
+Training MLP on lbp
+MLP accuracy on train for lbp: 0.9951456310679612
+SVM_RF performance on test for lbp
+Accuracy: 0.9320388349514563 Precision: 0.9838709677419355 Recall: 0.9104477611940298
+MLP performance on test for lbp
+Accuracy: 0.883495145631068 Precision: 0.9508196721311475 Recall: 0.8656716417910447
+

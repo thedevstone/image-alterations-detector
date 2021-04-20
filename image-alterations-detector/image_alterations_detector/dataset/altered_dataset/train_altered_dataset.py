@@ -3,7 +3,7 @@ import os
 import joblib
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.utils import compute_class_weight
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
@@ -26,13 +26,13 @@ def train_altered_descriptors():
     x_train_angles_descriptors, x_test_angles_descriptors, y_train_angles_descriptors, y_test_angles_descriptors \
         = train_test_split(angles_descriptors, labels, test_size=0.2, random_state=23)
     # Min max
-    angles_scaler = MinMaxScaler()
+    angles_scaler = StandardScaler()
     x_train_angles_descriptors = angles_scaler.fit_transform(x_train_angles_descriptors)
     x_test_angles_descriptors = angles_scaler.transform(x_test_angles_descriptors)
     print("Training on angles")
     multi_clf_angles = MlpSvmRf('angles')
     multi_clf_angles.create_model(svm_c=1000, svm_kernel='linear', rf_max_depth=5,
-                                  input_shape_length=ANGLES_DIM, layer1=80, layer2=10, activation='tanh',
+                                  input_shape_length=ANGLES_DIM, layer1=200, layer2=50, activation='tanh',
                                   dropout=0.2)
     multi_clf_angles.fit(x_train_angles_descriptors, y_train_angles_descriptors,
                          class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
@@ -44,14 +44,14 @@ def train_altered_descriptors():
     x_train_matrices_descriptors, x_test_matrices_descriptors, y_train_matrices_descriptors, y_test_matrices_descriptors \
         = train_test_split(matrices_descriptors, labels, test_size=0.2, random_state=23)
     # Min max
-    matrices_scaler = MinMaxScaler()
+    matrices_scaler = StandardScaler()
     x_train_matrices_descriptors = matrices_scaler.fit_transform(x_train_matrices_descriptors)
     x_test_matrices_descriptors = matrices_scaler.transform(x_test_matrices_descriptors)
     # Train on matrices
     print("Training on affine matrices")
     multi_clf_matrices = MlpSvmRf('affine_matrices')
-    multi_clf_matrices.create_model(svm_c=1000, svm_kernel='linear', rf_max_depth=5,
-                                    input_shape_length=AFFINE_MATRICES_DIM, layer1=100, layer2=50, activation='tanh',
+    multi_clf_matrices.create_model(svm_c=100, svm_kernel='rbf', rf_max_depth=5,
+                                    input_shape_length=AFFINE_MATRICES_DIM, layer1=300, layer2=50, activation='tanh',
                                     dropout=0.2)
     multi_clf_matrices.fit(x_train_matrices_descriptors, y_train_matrices_descriptors,
                            class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
@@ -63,13 +63,13 @@ def train_altered_descriptors():
     x_train_lbp_descriptors, x_test_lbp_descriptors, y_train_lbp_descriptors, y_test_lbp_descriptors = \
         train_test_split(lbp_descriptors, labels, test_size=0.2, random_state=23)
     # Min max
-    lbp_scaler = MinMaxScaler()
+    lbp_scaler = StandardScaler()
     x_train_lbp_descriptors = lbp_scaler.fit_transform(x_train_lbp_descriptors)
     x_test_lbp_descriptors = lbp_scaler.transform(x_test_lbp_descriptors)
     # Train on lbp
     multi_clf_lbp = MlpSvmRf('lbp')
-    multi_clf_lbp.create_model(svm_c=10000, svm_kernel='linear', rf_max_depth=5,
-                               input_shape_length=LBP_DIM, layer1=10, layer2=None, activation='tanh', dropout=0.2)
+    multi_clf_lbp.create_model(svm_c=1000, svm_kernel='linear', rf_max_depth=5,
+                               input_shape_length=LBP_DIM, layer1=50, layer2=10, activation='tanh', dropout=0.2)
     multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors,
                       class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
     # Evaluate and save
