@@ -21,9 +21,10 @@ class Controller:
         self.landmarks_target: Optional[np.ndarray] = None
 
     def align_images(self):
+        if self.img_source is None:
+            raise ValueError('Images not initialized')
         self.img_source_aligned, self.landmarks_source = self.face_aligner.align(self.img_source)
         self.img_target_aligned, self.landmarks_target = self.face_aligner.align(self.img_target)
-        print('diocane')
 
     def get_alignment_view(self):
         visual_source = visualize_facial_landmarks_points(self.img_source_aligned, self.landmarks_source)

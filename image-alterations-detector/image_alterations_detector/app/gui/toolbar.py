@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.messagebox
 from tkinter import filedialog
 
 import cv2
@@ -58,5 +59,9 @@ class Toolbar:
             self.gui.tab1.set_image1(image_view_resize_preserve_ratio(img, 2))
 
     def align_images(self):
-        self.gui.controller.align_images()
-        self.gui.tab1.show_aligned()
+        try:
+            self.gui.controller.align_images()
+            self.gui.tab1.show_aligned()
+        except ValueError:
+            tkinter.messagebox.showwarning(title='Image warning', message='Please load images')
+            return
