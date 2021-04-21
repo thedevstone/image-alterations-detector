@@ -46,17 +46,6 @@ class Tab3:
         self.result_panel.columnconfigure(0, weight=1)
         self.result_panel.columnconfigure(1, weight=1)
 
-        # Static labels
-        create_text_label(self.result_panel, 'General:', 25, 0, 0, 'nw')
-        create_text_label(self.result_panel, 'Skin:', 20, 1, 0, 'nw')
-        create_text_label(self.result_panel, 'Nose:', 20, 2, 0, 'nw')
-        create_text_label(self.result_panel, 'eye:', 20, 3, 0, 'nw')
-        create_text_label(self.result_panel, 'brow:', 20, 4, 0, 'nw')
-        create_text_label(self.result_panel, 'ear:', 20, 5, 0, 'nw')
-        create_text_label(self.result_panel, 'mouth:', 20, 6, 0, 'nw')
-        create_text_label(self.result_panel, 'hair:', 20, 7, 0, 'nw')
-        create_text_label(self.result_panel, 'neck:', 20, 8, 0, 'nw')
-
     def set_segmentation_infos(self, img1, img2, general_iou: float, masks_iou: List[Tuple[str, float]]):
         size = int(self.tab_root.winfo_height() - 300)
         img1 = convert_to_tk_image(image_view_resize(img1, size))
@@ -65,7 +54,9 @@ class Tab3:
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
         masks_iou = sorted(masks_iou, key=lambda tup: tup[1], reverse=True)
         # General iou
+        create_text_label(self.result_panel, 'General:', 25, 0, 0, 'nw')
         create_text_label(self.result_panel, '{}%'.format(int(round(general_iou, 2) * 100)), 25, 0, 1, 'nw')
         # Masks iou
         for idx, iou_tuple in enumerate(masks_iou):
+            create_text_label(self.result_panel, iou_tuple[0], 20, idx + 1, 0, 'nw')
             create_text_label(self.result_panel, '{}%'.format(int(round(iou_tuple[1], 2) * 100)), 20, idx + 1, 1, 'nw')
