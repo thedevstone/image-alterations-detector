@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter.ttk import Notebook
 
-from image_alterations_detector.app.gui.tabs.tab1.tab1 import Tab1
+from image_alterations_detector.app.gui.tabs.tab1 import Tab1
+from image_alterations_detector.app.gui.tabs.tab2 import Tab2
 from image_alterations_detector.app.gui.toolbar import Toolbar
 
 
@@ -13,6 +14,8 @@ class Gui:
         self.toolbar = Toolbar(self, self.window)
         self.tab_control = tk.ttk.Notebook(self.window)
         self.tab1 = Tab1(self, self.tab_control)
+        self.tab_control.grid(row=0, column=1, sticky='nsew')
+        self.tab2 = Tab2(self, self.tab_control)
         self.tab_control.grid(row=0, column=1, sticky='nsew')
 
     def init_gui(self):

@@ -7,6 +7,8 @@ from image_alterations_detector.app.gui.gui import Gui
 from image_alterations_detector.app.gui.utils.conversion import image_view_resize_preserve_ratio
 from image_alterations_detector.app.gui.utils.general_utils import show_message_box
 from image_alterations_detector.dataset.altered_dataset.test_altered_dataset import test_two_images
+from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangle_descriptor_visualization import \
+    draw_delaunay_alterations
 from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
     visualize_facial_landmarks_points, visualize_facial_landmarks_areas
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
@@ -61,6 +63,9 @@ class Controller:
         if self.check_images():
             show_message_box('please load both images', 'warning')
         else:
+            draw_delaunay_alterations(self.img_source, self.img_target, animate=True,
+                                      show_function=lambda img1, img2: self.ui.tab2.set_triangulation_images(img1,
+                                                                                                             img2))
             res = test_two_images(self.img_source, self.img_target)
             print(res)
 
