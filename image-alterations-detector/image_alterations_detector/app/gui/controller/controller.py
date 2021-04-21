@@ -11,6 +11,8 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
 from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
     visualize_facial_landmarks_points, visualize_facial_landmarks_areas
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
+from image_alterations_detector.segmentation.segmentation_tools import segment_images, compute_general_iou, \
+    denormalize_and_convert_rgb, compute_iou_per_mask
 
 
 class Controller:
@@ -67,6 +69,16 @@ class Controller:
                                                                                                              img2))
             res = test_two_images(self.img_source, self.img_target)
             self.ui.tab2.show_result(res)
+
+    def segment_images(self):
+        if self.check_images():
+            show_message_box('please load both images', 'warning')
+        else:
+            segmented = segment_images([self.img_source, self.img_target])
+            rgb_images = denormalize_and_convert_rgb(segmented)
+            general_iou = compute_general_iou(segmented[0], segmented[1])
+            masks_iou = compute_iou_per_mask(segmented[0], segmented[1])
+            self.ui.tab3.set_segmentation_infos(rgb_images[0], rgb_images[1], general_iou, masks_iou)
 
     def set_ui(self, ui):
         self.ui = ui

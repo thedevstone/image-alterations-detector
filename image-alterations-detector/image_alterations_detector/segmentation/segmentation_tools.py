@@ -3,6 +3,8 @@ from typing import List, Tuple
 import numpy as np
 import tensorflow as tf
 
+import image_alterations_detector.segmentation.configuration.color_configuration as color_conf
+import image_alterations_detector.segmentation.conversions as conversions
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 from image_alterations_detector.file_system.path_utilities import get_model_path
 from image_alterations_detector.segmentation.configuration.color_configuration import get_classes_list
@@ -12,22 +14,18 @@ CLASSES_TO_SEGMENT = {'skin': True, 'nose': True, 'eye': True, 'brow': True, 'ea
                       'hair': True, 'neck': True, 'cloth': False}
 
 
-def segment_images(images: List[np.ndarray], convert_to_rgb=False):
+def segment_images(images: List[np.ndarray]):
     """ Perform segmentation on a list of images
 
     :param images: the list of images
-    :param convert_to_rgb: if convert to rgb
     :return: the list of segmented masks (converted in rgb if selected)
     """
     set_keras_backend()
-    import image_alterations_detector.segmentation.configuration.color_configuration as color_conf
-    import image_alterations_detector.segmentation.conversions as conversions
     import image_alterations_detector.segmentation.model as model
 
     # Configuration
     image_size = 256
     aligner = FaceAligner(desired_face_width=image_size)
-    colors_values_list = color_conf.get_classes_colors(CLASSES_TO_SEGMENT)
     # Load the model
     inference_model = model.load_model(get_model_path('unet.h5'))
     # Output images
@@ -39,18 +37,26 @@ def segment_images(images: List[np.ndarray], convert_to_rgb=False):
         img1_normalized = img / 255.0
         images_predicted = inference_model.predict(img1_normalized)
         image_predicted = images_predicted[0]
-        if convert_to_rgb:
-            image_predicted = conversions.denormalize(image_predicted)
-            image_predicted = conversions.mask_channels_to_rgb(image_predicted, 8, image_size, colors_values_list)
         predicted_images.append(image_predicted)
     return predicted_images
 
 
-def compute_general_iou(img1, img2) -> float:
+def denormalize_and_convert_rgb(masks):
+    image_size = 256
+    colors_values_list = color_conf.get_classes_colors(CLASSES_TO_SEGMENT)
+    rgb_images = []
+    for mask in masks:
+        img_rgb = conversions.denormalize(mask)
+        img_rgb = conversions.mask_channels_to_rgb(img_rgb, 8, image_size, colors_values_list)
+        rgb_images.append(img_rgb)
+    return rgb_images
+
+
+def compute_general_iou(segmented1, segmented2) -> float:
     """ Compute the IOU value for the images
 
-    :param img1: the source image
-    :param img2: the destination image
+    :param segmented1: the source image
+    :param segmented2: the destination image
     :return: the IOU value
     """
     set_keras_backend()
@@ -58,15 +64,16 @@ def compute_general_iou(img1, img2) -> float:
     import segmentation_models as sm
     # class_weight = np.array([0.29, 0.02, 0.00, 0.01, 0.01, 0.01, 0.33, 0.04, 0.28])
     iou: IOUScore = sm.metrics.IOUScore(threshold=0.7)
-    segmented = segment_images([img1, img2])
-    return iou(segmented[0], segmented[1])
+    general_iou = iou(segmented1, segmented2)
+    general_iou = tf.keras.backend.get_value(general_iou)
+    return general_iou
 
 
-def compute_iou_per_mask(img1, img2) -> List[Tuple[str, float]]:
+def compute_iou_per_mask(segmented1, segmented2) -> List[Tuple[str, float]]:
     """ Compute the IOU on all masks
 
-    :param img1: the source image
-    :param img2: the destination image
+    :param segmented1: the source image
+    :param segmented2: the destination image
     :return: the list of all IOU for each mask
     """
     set_keras_backend()
@@ -74,9 +81,6 @@ def compute_iou_per_mask(img1, img2) -> List[Tuple[str, float]]:
     import segmentation_models as sm
     # class_weight = np.array([0.29, 0.02, 0.00, 0.01, 0.01, 0.01, 0.33, 0.04, 0.28])
     iou: IOUScore = sm.metrics.IOUScore(threshold=0.7)
-    segmented = segment_images([img1, img2])
-    segmented1 = segmented[0]
-    segmented2 = segmented[1]
     iou_values = []
     for idx, clazz in enumerate(get_classes_list(CLASSES_TO_SEGMENT)):
         mask1 = np.expand_dims(segmented1[:, :, idx], 2)

@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 import tkinter as tk
-from tkinter import StringVar
 from tkinter.ttk import Notebook
-from typing import Optional
+from typing import Optional, List, Tuple
 
-from image_alterations_detector.app.gui.utils.conversion import convert_to_tk_image, mean_weight, image_view_resize
-from image_alterations_detector.app.gui.utils.layout_utils import set_img_label_layout, create_text_label, \
-    create_text_label_var
+from image_alterations_detector.app.gui.utils.conversion import image_view_resize, convert_to_tk_image
+from image_alterations_detector.app.gui.utils.layout_utils import create_text_label, set_img_label_layout
 
 
-class Tab2:
+class Tab3:
     def __init__(self, gui, tab_control: Notebook):
         from image_alterations_detector.app.gui.gui import Gui
         # Init tab
@@ -19,7 +17,7 @@ class Tab2:
         self.tab_root = tk.ttk.Frame(self.tab_control)
         # Tab root
         self.tab_root.grid(row=0, column=0, sticky='nsew')
-        self.tab_control.add(self.tab_root, text='Analysis')
+        self.tab_control.add(self.tab_root, text='Segmentation')
         self.tab_root.columnconfigure(0, weight=1)
         self.tab_root.rowconfigure(0, weight=1)
         self.tab_root.rowconfigure(1, weight=0)
@@ -39,7 +37,7 @@ class Tab2:
         self.info_panel.columnconfigure(0, weight=1)
 
         # Title
-        self.title_label: Optional[tk.Label] = tk.Label(self.info_panel, text='Alteration Estimate', font=("Times", 35))
+        self.title_label: Optional[tk.Label] = tk.Label(self.info_panel, text='IOU values', font=("Times", 35))
         self.title_label.grid(row=0, column=0, sticky='new')
 
         # Result panel
@@ -48,26 +46,26 @@ class Tab2:
         self.result_panel.columnconfigure(0, weight=1)
         self.result_panel.columnconfigure(1, weight=1)
 
-        create_text_label(self.result_panel, 'Triangles transformation:', 25, 0, 0, 'nw')
-        create_text_label(self.result_panel, 'Angles change:', 25, 1, 0, 'nw')
-        create_text_label(self.result_panel, 'Texture change:', 25, 2, 0, 'nw')
-        # Vars
-        self.matrices_var = StringVar()
-        self.angles_var = StringVar()
-        self.texture_var = StringVar()
-        create_text_label_var(self.result_panel, self.matrices_var, 25, 0, 1, 'nw')
-        create_text_label_var(self.result_panel, self.angles_var, 25, 1, 1, 'nw')
-        create_text_label_var(self.result_panel, self.texture_var, 25, 2, 1, 'nw')
+        # Static labels
+        create_text_label(self.result_panel, 'General:', 25, 0, 0, 'nw')
+        create_text_label(self.result_panel, 'Skin:', 20, 1, 0, 'nw')
+        create_text_label(self.result_panel, 'Nose:', 20, 2, 0, 'nw')
+        create_text_label(self.result_panel, 'eye:', 20, 3, 0, 'nw')
+        create_text_label(self.result_panel, 'brow:', 20, 4, 0, 'nw')
+        create_text_label(self.result_panel, 'ear:', 20, 5, 0, 'nw')
+        create_text_label(self.result_panel, 'mouth:', 20, 6, 0, 'nw')
+        create_text_label(self.result_panel, 'hair:', 20, 7, 0, 'nw')
+        create_text_label(self.result_panel, 'neck:', 20, 8, 0, 'nw')
 
-    def set_triangulation_images(self, img1, img2):
-        size = int(self.tab_root.winfo_height() - 150)
+    def set_segmentation_infos(self, img1, img2, general_iou: float, masks_iou: List[Tuple[str, float]]):
+        size = int(self.tab_root.winfo_height() - 300)
         img1 = convert_to_tk_image(image_view_resize(img1, size))
         img2 = convert_to_tk_image(image_view_resize(img2, size))
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
-
-    def show_result(self, results):
-        angles_result, affine_matrices_result, lbp_result = results
-        self.angles_var.set('{}%'.format(mean_weight(angles_result)))
-        self.matrices_var.set('{}%'.format(mean_weight(affine_matrices_result)))
-        self.texture_var.set('{}%'.format(mean_weight(lbp_result)))
+        masks_iou = sorted(masks_iou, key=lambda tup: tup[1], reverse=True)
+        # General iou
+        create_text_label(self.result_panel, '{}%'.format(int(round(general_iou, 2) * 100)), 25, 0, 1, 'nw')
+        # Masks iou
+        for idx, iou_tuple in enumerate(masks_iou):
+            create_text_label(self.result_panel, '{}%'.format(int(round(iou_tuple[1], 2) * 100)), 20, idx + 1, 1, 'nw')
