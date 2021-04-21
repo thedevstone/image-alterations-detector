@@ -22,12 +22,15 @@ class Toolbar:
                                     command=lambda: self.load_image('webcam'))
         btn_align = tk.Button(self.toolbar, text="Align images",
                               command=lambda: self.align_images())
+        btn_analyze = tk.Button(self.toolbar, text="Analyze images",
+                                command=lambda: self.analyze_images())
         # Position
         self.toolbar.grid(row=0, column=0, sticky="nsw")
         btn_open_source.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         btn_open_doc.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
         btn_open_webcam.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         btn_align.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
+        btn_analyze.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
 
     def load_image(self, img_type):
         def load_file():
@@ -61,7 +64,14 @@ class Toolbar:
     def align_images(self):
         try:
             self.gui.controller.align_images()
-            self.gui.tab1.show_aligned()
-        except ValueError:
+        except AssertionError:
+            tkinter.messagebox.showwarning(title='Image warning', message='Please load images')
+            return
+
+    def analyze_images(self):
+        try:
+            self.gui.controller.analyze_images()
+            # self.gui.tab1.show_aligned()
+        except AssertionError:
             tkinter.messagebox.showwarning(title='Image warning', message='Please load images')
             return

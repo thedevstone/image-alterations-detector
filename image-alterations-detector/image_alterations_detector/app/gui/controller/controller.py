@@ -21,11 +21,11 @@ class Controller:
         self.landmarks_target: Optional[np.ndarray] = None
 
     def align_images(self):
-        if self.img_source is None:
-            raise ValueError('Images not initialized')
+        if self.img_source is None or self.img_target is None:
+            raise AssertionError('Images not initialized')
         self.img_source_aligned, self.landmarks_source = self.face_aligner.align(self.img_source)
         self.img_target_aligned, self.landmarks_target = self.face_aligner.align(self.img_target)
-
+        
     def get_alignment_view(self):
         visual_source = visualize_facial_landmarks_points(self.img_source_aligned, self.landmarks_source)
         visual_target = visualize_facial_landmarks_points(self.img_target_aligned, self.landmarks_target)
@@ -33,11 +33,11 @@ class Controller:
         visual_target = visualize_facial_landmarks_areas(visual_target, self.landmarks_target, alpha=0.5)
         return visual_source, visual_target
 
-    def test_two_images(self):
-        if not (self.img_source and self.img_target):
+    def analyze_images(self):
+        if self.img_source is None or self.img_target is None:
             raise AssertionError('Image not initialized')
         res = test_two_images(self.img_source, self.img_target)
-        return res
+        print(res)
 
     def set_ui(self, ui):
         self.ui = ui
