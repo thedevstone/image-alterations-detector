@@ -1,5 +1,5 @@
 import tkinter as tk
-import tkinter.messagebox
+from threading import Thread
 from tkinter import filedialog
 
 
@@ -44,16 +44,7 @@ class Toolbar:
             self.gui.controller.take_webcam_photo()
 
     def align_images(self):
-        try:
-            self.gui.controller.align_images()
-        except AssertionError:
-            tkinter.messagebox.showwarning(title='Image warning', message='Please load images')
-            return
+        Thread(name='image analyze', target=lambda: self.gui.controller.align_images()).start()
 
     def analyze_images(self):
-        try:
-            self.gui.controller.analyze_images()
-            # self.gui.tab1.show_aligned()
-        except AssertionError:
-            tkinter.messagebox.showwarning(title='Image warning', message='Please load images')
-            return
+        Thread(name='image analyze', target=lambda: self.gui.controller.analyze_images()).start()
