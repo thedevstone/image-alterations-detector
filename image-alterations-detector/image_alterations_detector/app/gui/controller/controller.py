@@ -5,7 +5,7 @@ import numpy as np
 from image_alterations_detector.app.gui.gui import Gui
 from image_alterations_detector.dataset.altered_dataset.test_altered_dataset import test_two_images
 from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
-    visualize_facial_landmarks_points
+    visualize_facial_landmarks_points, visualize_facial_landmarks_areas
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
 
@@ -28,6 +28,8 @@ class Controller:
     def get_alignment_view(self):
         visual_source = visualize_facial_landmarks_points(self.img_source_aligned, self.landmarks_source)
         visual_target = visualize_facial_landmarks_points(self.img_target_aligned, self.landmarks_target)
+        visual_source = visualize_facial_landmarks_areas(visual_source, self.landmarks_source, alpha=0.5)
+        visual_target = visualize_facial_landmarks_areas(visual_target, self.landmarks_target, alpha=0.5)
         return visual_source, visual_target
 
     def test_two_images(self):

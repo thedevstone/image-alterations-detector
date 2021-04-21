@@ -35,7 +35,7 @@ def visualize_facial_landmarks_areas(image: np.ndarray, shape: np.ndarray, color
     if colors is None:
         colors = [(19, 199, 109), (79, 76, 240), (230, 159, 23),
                   (168, 100, 168), (158, 163, 32),
-                  (163, 38, 32), (180, 42, 220), (0, 0, 255)]
+                  (163, 38, 32), (180, 42, 220), (150, 150, 255)]
 
     # For each landmark region
     for (i, name) in enumerate(FACIAL_LANDMARKS_INDEXES.keys()):
