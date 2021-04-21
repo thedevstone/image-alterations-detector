@@ -48,8 +48,7 @@ class Tab1:
         img2 = convert_to_tk_image(img2)
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
 
-    def show_aligned(self):
-        img1, img2 = self.gui.controller.get_alignment_view()
+    def show_aligned(self, img1, img2):
         img1 = convert_to_tk_image(image_view_resize(img1))
         img2 = convert_to_tk_image(image_view_resize(img2))
         set_img_label_layout(self.image1_align_label, img1, 1, 0, 'w')

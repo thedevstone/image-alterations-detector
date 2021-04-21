@@ -10,11 +10,6 @@ def convert_to_tk_image(img):
     return img
 
 
-def image_process(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return img
-
-
 def image_view_resize_preserve_ratio(img, ratio=2):
     img = cv2.resize(img, (int(img.shape[1] / ratio), int(img.shape[0] / ratio)))
     return img

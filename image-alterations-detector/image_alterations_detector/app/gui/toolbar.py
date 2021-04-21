@@ -2,10 +2,6 @@ import tkinter as tk
 import tkinter.messagebox
 from tkinter import filedialog
 
-import cv2
-
-from image_alterations_detector.app.gui.utils.conversion import image_process, image_view_resize_preserve_ratio
-
 
 class Toolbar:
     def __init__(self, gui, parent):
@@ -41,25 +37,11 @@ class Toolbar:
                 raise FileNotFoundError('Image not found')
             return filepath
 
-        if img_type == 'source':
+        if img_type != 'webcam':
             img_path = load_file()
-            img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-            img = image_process(img)
-            self.gui.controller.img_source = img
-            self.gui.tab1.set_image1(image_view_resize_preserve_ratio(img, 2))
-        elif img_type == 'target':
-            img_path = load_file()
-            img = cv2.imread(img_path, cv2.IMREAD_COLOR)
-            img = image_process(img)
-            self.gui.controller.img_target = img
-            self.gui.tab1.set_image2(image_view_resize_preserve_ratio(img, 2))
+            self.gui.controller.load_image_form_path(img_path, img_type)
         else:
-            cam = cv2.VideoCapture(0)
-            ret, frame = cam.read()
-            img = image_process(frame)
-            cam.release()
-            self.gui.controller.img_source = img
-            self.gui.tab1.set_image1(image_view_resize_preserve_ratio(img, 2))
+            self.gui.controller.take_webcam_photo()
 
     def align_images(self):
         try:
