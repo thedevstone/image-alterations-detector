@@ -10,8 +10,15 @@ def convert_to_tk_image(img):
     return img
 
 
-def image_process(img, size=256):
-    img = cv2.imread(img, cv2.IMREAD_COLOR)
+def image_process(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (size, size))
     return img
+
+
+def image_view_resize_preserve_ratio(img, ratio=2):
+    img = cv2.resize(img, (int(img.shape[1] / ratio), int(img.shape[0] / ratio)))
+    return img
+
+
+def image_view_resize(img, size=512):
+    return cv2.resize(img, (size, size))

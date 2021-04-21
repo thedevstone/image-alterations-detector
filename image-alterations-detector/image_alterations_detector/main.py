@@ -1,4 +1,4 @@
-from image_alterations_detector.app.controller import Controller
+from image_alterations_detector.app.gui.controller.controller import Controller
 from image_alterations_detector.app.gui.gui import Gui
 
 if __name__ == '__main__':

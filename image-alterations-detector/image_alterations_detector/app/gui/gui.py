@@ -17,7 +17,9 @@ class Gui:
 
     def init_gui(self):
         # Window init
-        self.window.geometry('1200x800')
+        w, h = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
+        # self.window.attributes('-fullscreen', True)
+        self.window.geometry("%dx%d+0+0" % (w, h))
         self.window.title('Image Alteration Detector')
         self.window.rowconfigure(0, weight=1)
         self.window.columnconfigure(0, weight=0)
