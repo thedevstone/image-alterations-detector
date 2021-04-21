@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 
 from image_alterations_detector.app.gui.gui import Gui
-from image_alterations_detector.app.gui.utils.conversion import image_view_resize_preserve_ratio
 from image_alterations_detector.app.gui.utils.general_utils import show_message_box
 from image_alterations_detector.dataset.altered_dataset.test_altered_dataset import test_two_images
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangle_descriptor_visualization import \
@@ -33,10 +32,10 @@ class Controller:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         if img_type == 'source':
             self.img_source = img
-            self.ui.tab1.set_image1(image_view_resize_preserve_ratio(self.img_source))
+            self.ui.tab1.set_image1(self.img_source)
         else:
             self.img_target = img
-            self.ui.tab1.set_image2(image_view_resize_preserve_ratio(self.img_target))
+            self.ui.tab1.set_image2(self.img_target)
 
     def take_webcam_photo(self):
         cam = cv2.VideoCapture(0)
@@ -44,7 +43,7 @@ class Controller:
         cam.release()
         img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         self.img_source = img
-        self.ui.tab1.set_image1(image_view_resize_preserve_ratio(self.img_source))
+        self.ui.tab1.set_image1(self.img_source)
 
     def align_images(self):
         if self.check_images():
@@ -67,7 +66,7 @@ class Controller:
                                       show_function=lambda img1, img2: self.ui.tab2.set_triangulation_images(img1,
                                                                                                              img2))
             res = test_two_images(self.img_source, self.img_target)
-            print(res)
+            self.ui.tab2.show_result(res)
 
     def set_ui(self, ui):
         self.ui = ui

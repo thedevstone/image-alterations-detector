@@ -41,15 +41,18 @@ class Tab1:
         self.image1_align_label: Optional[tk.Label] = tk.Label(self.images_panel)
 
     def set_image1(self, img1):
-        img1 = convert_to_tk_image(img1)
+        size = int(self.tab_root.winfo_height() / 2)
+        img1 = convert_to_tk_image(image_view_resize(img1, size=size))
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
 
     def set_image2(self, img2):
-        img2 = convert_to_tk_image(img2)
+        size = int(self.tab_root.winfo_height() / 2)
+        img2 = convert_to_tk_image(image_view_resize(img2, size=size))
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
 
     def show_aligned(self, img1, img2):
-        img1 = convert_to_tk_image(image_view_resize(img1))
-        img2 = convert_to_tk_image(image_view_resize(img2))
+        size = int(self.tab_root.winfo_height() / 2)
+        img1 = convert_to_tk_image(image_view_resize(img1, size=size))
+        img2 = convert_to_tk_image(image_view_resize(img2, size=size))
         set_img_label_layout(self.image1_align_label, img1, 1, 0, 'w')
         set_img_label_layout(self.image2_align_label, img2, 1, 1, 'e')
