@@ -60,6 +60,9 @@ def draw_delaunay_alterations(source_image, dest_image, animate=True,
         if animate:
             show_function(source_out, dest_out)
             cv2.waitKey(200)
+
+    if show_function:
+        show_function(source_out, dest_out)
     return source_out
 
 

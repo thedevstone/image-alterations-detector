@@ -20,6 +20,8 @@ class Toolbar:
                               command=lambda: self.align_images())
         btn_analyze = tk.Button(self.toolbar, text="Analyze images",
                                 command=lambda: self.analyze_images())
+        self.animate_var = tk.BooleanVar()
+        checkbox = tk.Checkbutton(self.toolbar, text="Animate", variable=self.animate_var, onvalue=True, offvalue=False)
         # Position
         self.toolbar.grid(row=0, column=0, sticky="nsw")
         btn_open_source.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
@@ -27,6 +29,7 @@ class Toolbar:
         btn_open_webcam.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         btn_align.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
         btn_analyze.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+        checkbox.grid(row=5, column=0, sticky="ew", padx=10, pady=0)
 
     def load_image(self, img_type):
         def load_file():
@@ -47,4 +50,4 @@ class Toolbar:
         Thread(name='image analyze', target=lambda: self.gui.controller.align_images()).start()
 
     def analyze_images(self):
-        Thread(name='image analyze', target=lambda: self.gui.controller.analyze_images()).start()
+        Thread(name='image analyze', target=lambda: self.gui.controller.analyze_images(self.animate_var.get())).start()

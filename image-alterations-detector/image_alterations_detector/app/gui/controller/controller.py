@@ -59,11 +59,11 @@ class Controller:
             visual_target = visualize_facial_landmarks_areas(visual_target, self.landmarks_target, alpha=0.5)
             self.ui.tab1.show_aligned(visual_source, visual_target)
 
-    def analyze_images(self):
+    def analyze_images(self, animate):
         if self.check_images():
             show_message_box('please load both images', 'warning')
         else:
-            draw_delaunay_alterations(self.img_source, self.img_target, animate=True,
+            draw_delaunay_alterations(self.img_source, self.img_target, animate=animate,
                                       show_function=lambda img1, img2: self.ui.tab2.set_triangulation_images(img1,
                                                                                                              img2))
             res = test_two_images(self.img_source, self.img_target)
