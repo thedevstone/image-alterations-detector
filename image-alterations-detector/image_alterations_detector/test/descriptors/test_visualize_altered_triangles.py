@@ -14,8 +14,11 @@ def main():
     # controlled_Img = genuine[2][image_index]
     # beauty_img = beauty[2][image_index]
 
-    def show_img(img):
-        cv2.imshow('Delaunay', img)
+    def show_img(img1, img2):
+        img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2RGB)
+        img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2RGB)
+        cv2.imshow('Delaunay 1', img1)
+        cv2.imshow('Delaunay 2', img2)
 
     draw_delaunay_alterations(load_img('m-001-1.png'), load_img('m-001-a.jpg'), animate=True, show_function=show_img)
 
