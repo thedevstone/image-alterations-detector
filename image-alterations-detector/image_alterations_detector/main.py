@@ -1,8 +1,8 @@
-from image_alterations_detector.app.gui.controller.controller import Controller
-from image_alterations_detector.app.gui.gui import Gui
+from image_alterations_detector.app.controller.controller import Controller
+from image_alterations_detector.app.view.view import View
 
 if __name__ == '__main__':
     controller = Controller()
-    gui = Gui(controller)
+    gui = View(controller)
     controller.set_ui(gui)
     controller.start()

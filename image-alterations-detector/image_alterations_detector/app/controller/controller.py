@@ -3,8 +3,8 @@ from typing import Optional
 import cv2
 import numpy as np
 
-from image_alterations_detector.app.gui.gui import Gui
-from image_alterations_detector.app.gui.utils.general_utils import show_message_box
+from image_alterations_detector.app.utils.general_utils import show_message_box
+from image_alterations_detector.app.view.view import View
 from image_alterations_detector.dataset.altered_dataset.test_altered_dataset import test_two_images
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangle_descriptor_visualization import \
     draw_delaunay_alterations
@@ -17,7 +17,7 @@ from image_alterations_detector.segmentation.segmentation_tools import segment_i
 
 class Controller:
     def __init__(self):
-        self.ui: Optional[Gui] = None
+        self.ui: Optional[View] = None
         self.img_source: Optional[np.ndarray] = None
         self.img_target: Optional[np.ndarray] = None
         self.face_aligner = FaceAligner()

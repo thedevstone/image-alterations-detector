@@ -4,9 +4,9 @@ from tkinter import filedialog
 
 
 class Toolbar:
-    def __init__(self, gui, parent):
-        from image_alterations_detector.app.gui.gui import Gui
-        self.gui: Gui = gui
+    def __init__(self, view, parent):
+        from image_alterations_detector.app.view.view import View
+        self.view: View = view
         self.tab_root = parent
         self.dialog = tk.filedialog
         self.toolbar = tk.Frame(self.tab_root, relief=tk.RAISED, bd=2)
@@ -45,15 +45,15 @@ class Toolbar:
             img_path = load_file()
             if not img_path:
                 return
-            self.gui.controller.load_image_form_path(img_path, img_type)
+            self.view.controller.load_image_form_path(img_path, img_type)
         else:
-            self.gui.controller.take_webcam_photo()
+            self.view.controller.take_webcam_photo()
 
     def align_images(self):
-        Thread(name='image align', target=lambda: self.gui.controller.align_images()).start()
+        Thread(name='image align', target=lambda: self.view.controller.align_images()).start()
 
     def analyze_images(self):
-        Thread(name='image analyze', target=lambda: self.gui.controller.analyze_images(self.animate_var.get())).start()
+        Thread(name='image analyze', target=lambda: self.view.controller.analyze_images(self.animate_var.get())).start()
 
     def segment_images(self):
-        Thread(name='image segment', target=lambda: self.gui.controller.segment_images()).start()
+        Thread(name='image segment', target=lambda: self.view.controller.segment_images()).start()

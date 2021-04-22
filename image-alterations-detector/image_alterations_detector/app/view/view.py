@@ -1,17 +1,17 @@
 import tkinter as tk
 from tkinter.ttk import Notebook
 
-from image_alterations_detector.app.gui.tabs.tab1 import Tab1
-from image_alterations_detector.app.gui.tabs.tab2 import Tab2
-from image_alterations_detector.app.gui.tabs.tab3 import Tab3
-from image_alterations_detector.app.gui.toolbar import Toolbar
+from image_alterations_detector.app.view.tabs.tab1 import Tab1
+from image_alterations_detector.app.view.tabs.tab2 import Tab2
+from image_alterations_detector.app.view.tabs.tab3 import Tab3
+from image_alterations_detector.app.view.toolbar import Toolbar
 
 
-class Gui:
+class View:
     def __init__(self, controller):
         self.controller = controller
         self.window = tk.Tk()
-        self.init_gui()
+        self.init_view()
         self.toolbar = Toolbar(self, self.window)
         self.tab_control = tk.ttk.Notebook(self.window)
         self.tab1 = Tab1(self, self.tab_control)
@@ -21,7 +21,7 @@ class Gui:
         self.tab3 = Tab3(self, self.tab_control)
         self.tab_control.grid(row=0, column=1, sticky='nsew')
 
-    def init_gui(self):
+    def init_view(self):
         # Window init
         w, h = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         # self.window.attributes('-fullscreen', True)

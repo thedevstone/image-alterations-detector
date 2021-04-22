@@ -5,16 +5,16 @@ from tkinter import StringVar
 from tkinter.ttk import Notebook
 from typing import Optional
 
-from image_alterations_detector.app.gui.utils.conversion import convert_to_tk_image, mean_weight, image_view_resize
-from image_alterations_detector.app.gui.utils.layout_utils import set_img_label_layout, create_text_label, \
+from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_view_resize
+from image_alterations_detector.app.utils.layout_utils import set_img_label_layout, create_text_label, \
     create_text_label_var
 
 
 class Tab2:
-    def __init__(self, gui, tab_control: Notebook):
-        from image_alterations_detector.app.gui.gui import Gui
+    def __init__(self, view, tab_control: Notebook):
+        from image_alterations_detector.app.view.view import View
         # Init tab
-        self.gui: Gui = gui
+        self.view: View = view
         self.tab_control = tab_control
         self.tab_root = tk.ttk.Frame(self.tab_control)
         # Tab root
