@@ -1,5 +1,4 @@
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image, ImageTk
 from imutils import resize
@@ -29,8 +28,6 @@ def image_resize_with_border(img, size=512):
 
 def image_view_resize(img, size=512):
     img = resize(img, width=size) if img.shape[0] > img.shape[1] else resize(img, height=size)
-    plt.imshow(img)
-    plt.show()
     center = np.array(img.shape) / 2
     x = center[1] - size / 2
     y = center[0] - size / 2

@@ -1,11 +1,11 @@
 from typing import List, Tuple
 
+import cv2
 import numpy as np
 import tensorflow as tf
 
 import image_alterations_detector.segmentation.configuration.color_configuration as color_conf
 import image_alterations_detector.segmentation.conversions as conversions
-from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 from image_alterations_detector.file_system.path_utilities import get_model_path
 from image_alterations_detector.segmentation.configuration.color_configuration import get_classes_list
 from image_alterations_detector.segmentation.configuration.keras_backend import set_keras_backend
@@ -14,31 +14,32 @@ CLASSES_TO_SEGMENT = {'skin': True, 'nose': True, 'eye': True, 'brow': True, 'ea
                       'hair': True, 'neck': True, 'cloth': False}
 
 
-def segment_images(images: List[np.ndarray]):
-    """ Perform segmentation on a list of images
+class FaceSegmenter:
+    def __init__(self):
+        set_keras_backend()
+        import image_alterations_detector.segmentation.model as model
+        # Configuration
+        self.image_size = 256
+        # Load the model
+        self.inference_model = model.load_model(get_model_path('unet.h5'))
 
-    :param images: the list of images
-    :return: the list of segmented masks (converted in rgb if selected)
-    """
-    set_keras_backend()
-    import image_alterations_detector.segmentation.model as model
+    def segment_images(self, images: List[np.ndarray]):
+        """ Perform segmentation on a list of images
 
-    # Configuration
-    image_size = 256
-    aligner = FaceAligner(desired_face_width=image_size)
-    # Load the model
-    inference_model = model.load_model(get_model_path('unet.h5'))
-    # Output images
-    predicted_images = []
-    # Images
-    for img in images:
-        img, landmarks = aligner.align(img)
-        img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2])).astype('float')
-        img1_normalized = img / 255.0
-        images_predicted = inference_model.predict(img1_normalized)
-        image_predicted = images_predicted[0]
-        predicted_images.append(image_predicted)
-    return predicted_images
+        :param images: the list of images
+        :return: the list of segmented masks (converted in rgb if selected)
+        """
+        # Output images
+        predicted_images = []
+        # Images
+        for img in images:
+            img = cv2.resize(img, (self.image_size, self.image_size))
+            img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2])).astype('float')
+            img1_normalized = img / 255.0
+            images_predicted = self.inference_model.predict(img1_normalized)
+            image_predicted = images_predicted[0]
+            predicted_images.append(image_predicted)
+        return predicted_images
 
 
 def denormalize_and_convert_rgb(masks):

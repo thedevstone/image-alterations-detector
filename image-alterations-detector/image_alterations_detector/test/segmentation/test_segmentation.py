@@ -1,11 +1,11 @@
 from image_alterations_detector.app.utils.conversion import image_resize_with_border
 from image_alterations_detector.plotting.plotting import get_images_mosaic_with_label
-from image_alterations_detector.segmentation.segmentation_tools import segment_images, \
-    denormalize_and_convert_rgb
+from image_alterations_detector.segmentation.face_segmenter import denormalize_and_convert_rgb, FaceSegmenter
 from image_alterations_detector.utils.image_utils import load_img
 
 if __name__ == '__main__':
-    segmented = segment_images(
+    face_segmenter = FaceSegmenter()
+    segmented = face_segmenter.segment_images(
         [image_resize_with_border(load_img('franco1.png')),
          image_resize_with_border(load_img('franco2.png')),
          image_resize_with_border(load_img('franco3.png')),

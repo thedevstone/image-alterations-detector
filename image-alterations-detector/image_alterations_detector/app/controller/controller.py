@@ -11,8 +11,8 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
 from image_alterations_detector.face_morphology.landmarks_prediction.visualization import \
     visualize_facial_landmarks_points, visualize_facial_landmarks_areas
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
-from image_alterations_detector.segmentation.segmentation_tools import segment_images, compute_general_iou, \
-    denormalize_and_convert_rgb, compute_iou_per_mask
+from image_alterations_detector.segmentation.face_segmenter import compute_general_iou, \
+    denormalize_and_convert_rgb, compute_iou_per_mask, FaceSegmenter
 
 
 class Controller:
@@ -21,6 +21,7 @@ class Controller:
         self.img_source: Optional[np.ndarray] = None
         self.img_target: Optional[np.ndarray] = None
         self.face_aligner = FaceAligner()
+        self.face_segmenter = FaceSegmenter()
         self.img_source_aligned: Optional[np.ndarray] = None
         self.img_target_aligned: Optional[np.ndarray] = None
         self.landmarks_source: Optional[np.ndarray] = None
@@ -74,7 +75,7 @@ class Controller:
         if self.check_images():
             show_message_box('please load both images', 'warning')
         else:
-            segmented = segment_images([self.img_source, self.img_target])
+            segmented = self.face_segmenter.segment_images([self.img_source_aligned, self.img_target_aligned])
             rgb_images = denormalize_and_convert_rgb(segmented)
             general_iou = compute_general_iou(segmented[0], segmented[1])
             masks_iou = compute_iou_per_mask(segmented[0], segmented[1])
