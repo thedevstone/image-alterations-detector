@@ -41,9 +41,9 @@ class FaceSegmenter:
         return predicted_images
 
     def segment_image_keep_aspect_ratio(self, img):
-        resized, ratio, border = image_resize_with_border(img, size=self.image_size)
+        resized, old_size, border = image_resize_with_border(img, size=self.image_size)
         segmented = self.segment_image(resized)
-        restored = image_resize_restore_ratio(segmented, ratio, border)
+        restored = image_resize_restore_ratio(segmented, old_size, border)
         return restored
 
     def segment_images_keep_aspect_ratio(self, images: List[np.ndarray]):
