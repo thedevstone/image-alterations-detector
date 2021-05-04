@@ -42,7 +42,6 @@ class FaceSegmenter:
 
     def segment_image_keep_aspect_ratio(self, img):
         resized, ratio, border = image_resize_with_border(img, size=self.image_size)
-        print(resized.shape)
         segmented = self.segment_image(resized)
         restored = image_resize_restore_ratio(segmented, ratio, border)
         return restored
