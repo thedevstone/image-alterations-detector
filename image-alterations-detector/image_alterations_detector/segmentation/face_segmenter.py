@@ -23,6 +23,14 @@ class FaceSegmenter:
         # Load the model
         self.inference_model = model.load_model(get_model_path('unet.h5'))
 
+    def segment_image(self, img):
+        img = cv2.resize(img, (self.image_size, self.image_size))
+        img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2])).astype('float')
+        img1_normalized = img / 255.0
+        images_predicted = self.inference_model.predict(img1_normalized)
+        image_predicted = images_predicted[0]
+        return image_predicted
+
     def segment_images(self, images: List[np.ndarray]):
         """ Perform segmentation on a list of images
 
@@ -33,12 +41,7 @@ class FaceSegmenter:
         predicted_images = []
         # Images
         for img in images:
-            img = cv2.resize(img, (self.image_size, self.image_size))
-            img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2])).astype('float')
-            img1_normalized = img / 255.0
-            images_predicted = self.inference_model.predict(img1_normalized)
-            image_predicted = images_predicted[0]
-            predicted_images.append(image_predicted)
+            predicted_images.append(self.segment_image(img))
         return predicted_images
 
 
