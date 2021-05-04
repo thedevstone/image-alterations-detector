@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter.ttk import Notebook
 from typing import Optional
 
-from image_alterations_detector.app.utils.conversion import convert_to_tk_image, image_view_resize
+from image_alterations_detector.app.utils.conversion import convert_to_tk_image, image_resize_with_border
 from image_alterations_detector.app.utils.layout_utils import set_img_label_layout
 
 
@@ -42,17 +42,17 @@ class Tab1:
 
     def set_image1(self, img1):
         size = int(self.tab_root.winfo_height() / 2)
-        img1 = convert_to_tk_image(image_view_resize(img1, size=size))
+        img1 = convert_to_tk_image(image_resize_with_border(img1, size=size)[0])
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
 
     def set_image2(self, img2):
         size = int(self.tab_root.winfo_height() / 2)
-        img2 = convert_to_tk_image(image_view_resize(img2, size=size))
+        img2 = convert_to_tk_image(image_resize_with_border(img2, size=size)[0])
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
 
     def show_aligned(self, img1, img2):
         size = int(self.tab_root.winfo_height() / 2)
-        img1 = convert_to_tk_image(image_view_resize(img1, size=size))
-        img2 = convert_to_tk_image(image_view_resize(img2, size=size))
+        img1 = convert_to_tk_image(image_resize_with_border(img1, size=size)[0])
+        img2 = convert_to_tk_image(image_resize_with_border(img2, size=size)[0])
         set_img_label_layout(self.image1_align_label, img1, 1, 0, 'w')
         set_img_label_layout(self.image2_align_label, img2, 1, 1, 'e')

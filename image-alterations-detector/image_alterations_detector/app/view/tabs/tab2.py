@@ -5,7 +5,7 @@ from tkinter import StringVar
 from tkinter.ttk import Notebook
 from typing import Optional
 
-from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_view_resize
+from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_resize_with_border
 from image_alterations_detector.app.utils.layout_utils import set_img_label_layout, create_text_label, \
     create_text_label_var
 
@@ -61,8 +61,8 @@ class Tab2:
 
     def set_triangulation_images(self, img1, img2):
         size = int(self.tab_root.winfo_height() - 150)
-        img1 = convert_to_tk_image(image_view_resize(img1, size))
-        img2 = convert_to_tk_image(image_view_resize(img2, size))
+        img1 = convert_to_tk_image(image_resize_with_border(img1, size)[0])
+        img2 = convert_to_tk_image(image_resize_with_border(img2, size)[0])
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
 

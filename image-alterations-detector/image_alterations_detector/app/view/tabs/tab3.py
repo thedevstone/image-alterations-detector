@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter.ttk import Notebook
 from typing import Optional, List, Tuple
 
-from image_alterations_detector.app.utils.conversion import image_view_resize, convert_to_tk_image
+from image_alterations_detector.app.utils.conversion import convert_to_tk_image, \
+    image_resize_with_border
 from image_alterations_detector.app.utils.layout_utils import create_text_label, set_img_label_layout
 
 
@@ -48,8 +49,8 @@ class Tab3:
 
     def set_segmentation_infos(self, img1, img2, general_iou: float, masks_iou: List[Tuple[str, float]]):
         size = int(self.tab_control.winfo_height() - 350)
-        img1 = convert_to_tk_image(image_view_resize(img1, size))
-        img2 = convert_to_tk_image(image_view_resize(img2, size))
+        img1 = convert_to_tk_image(image_resize_with_border(img1, size)[0])
+        img2 = convert_to_tk_image(image_resize_with_border(img2, size)[0])
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
         masks_iou = sorted(masks_iou, key=lambda tup: tup[1], reverse=True)

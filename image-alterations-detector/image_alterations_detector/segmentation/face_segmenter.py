@@ -6,6 +6,7 @@ import tensorflow as tf
 
 import image_alterations_detector.segmentation.configuration.color_configuration as color_conf
 import image_alterations_detector.segmentation.conversions as conversions
+from image_alterations_detector.app.utils.conversion import image_resize_with_border, image_resize_restore_ratio
 from image_alterations_detector.file_system.path_utilities import get_model_path
 from image_alterations_detector.segmentation.configuration.color_configuration import get_classes_list
 from image_alterations_detector.segmentation.configuration.keras_backend import set_keras_backend
@@ -32,11 +33,6 @@ class FaceSegmenter:
         return image_predicted
 
     def segment_images(self, images: List[np.ndarray]):
-        """ Perform segmentation on a list of images
-
-        :param images: the list of images
-        :return: the list of segmented masks (converted in rgb if selected)
-        """
         # Output images
         predicted_images = []
         # Images
@@ -44,14 +40,28 @@ class FaceSegmenter:
             predicted_images.append(self.segment_image(img))
         return predicted_images
 
+    def segment_image_keep_aspect_ratio(self, img):
+        resized, ratio, border = image_resize_with_border(img, size=self.image_size)
+        print(resized.shape)
+        segmented = self.segment_image(resized)
+        restored = image_resize_restore_ratio(segmented, ratio, border)
+        return restored
+
+    def segment_images_keep_aspect_ratio(self, images: List[np.ndarray]):
+        # Output images
+        predicted_images = []
+        # Images
+        for img in images:
+            predicted_images.append(self.segment_image_keep_aspect_ratio(img))
+        return predicted_images
+
 
 def denormalize_and_convert_rgb(masks):
-    image_size = 256
     colors_values_list = color_conf.get_classes_colors(CLASSES_TO_SEGMENT)
     rgb_images = []
     for mask in masks:
         img_rgb = conversions.denormalize(mask)
-        img_rgb = conversions.mask_channels_to_rgb(img_rgb, 8, image_size, colors_values_list)
+        img_rgb = conversions.mask_channels_to_rgb(img_rgb, 8, colors_values_list)
         rgb_images.append(img_rgb)
     return rgb_images
 
