@@ -4,13 +4,17 @@ import numpy as np
 from sklearn.preprocessing import RobustScaler
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
-from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_two_image_descriptors
+from image_alterations_detector.dataset.altered_dataset.altered_descriptors import \
+    compute_two_image_descriptors_distortion, compute_two_image_descriptors_beauty
+from image_alterations_detector.face_morphology.landmarks_triangulation.manage_triangulation import load_triangulation
 from image_alterations_detector.file_system.path_utilities import get_image_path, get_model_path
 
 
 def test_two_images(img1, img2):
-    descriptor1_2_angles, descriptor1_2_area, descriptor1_2_matrix, descriptor1_2_lbp = compute_two_image_descriptors(
-        img1, img2)
+    triangles_indexes = load_triangulation('triangulation.txt')
+    descriptor1_2_angles, descriptor1_2_area, descriptor1_2_matrix = compute_two_image_descriptors_distortion(
+        img1, img2, triangles_indexes)
+    descriptor1_2_lbp = compute_two_image_descriptors_beauty(img1, img2)
 
     # Load angles model
     angles_scaler: RobustScaler = joblib.load(get_model_path('angles_scaler.pkl'))

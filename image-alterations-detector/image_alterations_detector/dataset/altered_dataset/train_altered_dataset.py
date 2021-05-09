@@ -7,19 +7,45 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils import compute_class_weight
 
 from image_alterations_detector.classifiers.mlp_svm_rf import MlpSvmRf
-from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_altered_descriptors, \
-    AFFINE_MATRICES_DIM, LBP_DIM, ANGLES_DIM
+from image_alterations_detector.dataset.altered_dataset.altered_descriptors import compute_altered_descriptors_beauty, \
+    AFFINE_MATRICES_DIM, LBP_DIM, ANGLES_DIM, compute_altered_descriptors_distortion
 from image_alterations_detector.file_system.path_utilities import get_folder_path_from_root
 
 
-def train_altered_descriptors():
+def train_altered_descriptors_beauty():
     dataset_path = '/Users/luca/Desktop/altered'
-    angles_descriptors, mean_area_descriptors, matrices_descriptors, lbp_descriptors, labels = compute_altered_descriptors(
-        dataset_path)
+    lbp_descriptors, labels = compute_altered_descriptors_beauty(dataset_path, 10)
+    # Class weights
+    class_weight = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
+    print("Class weights:", class_weight)
+
+    print("LBP shape:", lbp_descriptors.shape)
+    x_train_lbp_descriptors, x_test_lbp_descriptors, y_train_lbp_descriptors, y_test_lbp_descriptors = \
+        train_test_split(lbp_descriptors, labels, test_size=0.2, random_state=23)
+    # Min max
+    lbp_scaler = StandardScaler()
+    x_train_lbp_descriptors = lbp_scaler.fit_transform(x_train_lbp_descriptors)
+    x_test_lbp_descriptors = lbp_scaler.transform(x_test_lbp_descriptors)
+    # Train on lbp
+    multi_clf_lbp = MlpSvmRf('lbp')
+    multi_clf_lbp.create_model(rf_max_depth=13, svm_c=100, svm_gamma=0.001, svm_kernel='rbf',
+                               input_shape_length=LBP_DIM, layer1=50, layer2=10, activation='tanh', dropout=0.2)
+    multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors,
+                      class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
+    # Evaluate and save
+    multi_clf_lbp.evaluate(x_test_lbp_descriptors, y_test_lbp_descriptors)
+    multi_clf_lbp.save_models()
+    joblib.dump(lbp_scaler, os.path.join(get_folder_path_from_root('models'), 'lbp_scaler.pkl'))
+
+
+def train_altered_descriptors_distortion():
+    dataset_path = '/Users/luca/Desktop/altered'
+    angles_descriptors, mean_area_descriptors, matrices_descriptors, labels = compute_altered_descriptors_distortion(
+        dataset_path, 5)
 
     # Class weights
     class_weight = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
-    print("Class weights angles:", class_weight)
+    print("Class weights:", class_weight)
 
     # Training on angles
     print("Angles shape:", angles_descriptors.shape)
@@ -59,28 +85,11 @@ def train_altered_descriptors():
     multi_clf_matrices.evaluate(x_test_matrices_descriptors, y_test_matrices_descriptors)
     multi_clf_matrices.save_models()
 
-    print("LBP shape:", lbp_descriptors.shape)
-    x_train_lbp_descriptors, x_test_lbp_descriptors, y_train_lbp_descriptors, y_test_lbp_descriptors = \
-        train_test_split(lbp_descriptors, labels, test_size=0.2, random_state=23)
-    # Min max
-    lbp_scaler = StandardScaler()
-    x_train_lbp_descriptors = lbp_scaler.fit_transform(x_train_lbp_descriptors)
-    x_test_lbp_descriptors = lbp_scaler.transform(x_test_lbp_descriptors)
-    # Train on lbp
-    multi_clf_lbp = MlpSvmRf('lbp')
-    multi_clf_lbp.create_model(rf_max_depth=13, svm_c=100, svm_gamma=0.001, svm_kernel='rbf',
-                               input_shape_length=LBP_DIM, layer1=50, layer2=10, activation='tanh', dropout=0.2)
-    multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors,
-                      class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
-    # Evaluate and save
-    multi_clf_lbp.evaluate(x_test_lbp_descriptors, y_test_lbp_descriptors)
-    multi_clf_lbp.save_models()
-
     # Save scalers
     joblib.dump(angles_scaler, os.path.join(get_folder_path_from_root('models'), 'angles_scaler.pkl'))
     joblib.dump(matrices_scaler, os.path.join(get_folder_path_from_root('models'), 'matrices_scaler.pkl'))
-    joblib.dump(lbp_scaler, os.path.join(get_folder_path_from_root('models'), 'lbp_scaler.pkl'))
 
 
 if __name__ == '__main__':
-    train_altered_descriptors()
+    train_altered_descriptors_distortion()
+    # train_altered_descriptors_beauty()
