@@ -66,13 +66,16 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
     labels = []
     # Load the dataset
     genuine, altered = load_altered_dataset_distortion(dataset_path, images_to_load)
-    genuine_1, genuine_14 = genuine
+    genuine_1, genuine_14, genuine_up_sample1, genuine_up_sample2, genuine_up_sample3 = genuine
     barrel, pincushion, decr, incr = altered
     # Extract indexes from one image
     triangles_indexes = load_triangulation('triangulation.txt')
     for idx in range(0, images_to_load):
         img_genuine_1 = genuine_1[idx]
         img_genuine_14 = genuine_14[idx]
+        img_up1 = genuine_up_sample1[idx]
+        img_up2 = genuine_up_sample2[idx]
+        img_up3 = genuine_up_sample3[idx]
         img_barrel = barrel[idx]
         img_pincushion = pincushion[idx]
         img_decr = decr[idx]
@@ -81,6 +84,13 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
         try:
             angles_1_14, mean_area_1_14, affine_matrices_1_14 = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_genuine_14, triangles_indexes)
+            angles_1_up1, mean_area_1_up1, affine_matrices_1_up1 = compute_two_image_descriptors_distortion(
+                img_genuine_1, img_up1, triangles_indexes)
+            angles_1_up2, mean_area_1_up2, affine_matrices_1_up2 = compute_two_image_descriptors_distortion(
+                img_genuine_1, img_up2, triangles_indexes)
+            angles_1_up3, mean_area_1_up3, affine_matrices_1_up3 = compute_two_image_descriptors_distortion(
+                img_genuine_1, img_up3, triangles_indexes)
+
             angles_barrel, mean_area_barrel, affine_matrices_barrel = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_barrel, triangles_indexes)
             angles_pincushion, mean_area_pincushion, affine_matrices_pincushion = compute_two_image_descriptors_distortion(
@@ -91,13 +101,14 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
                 img_genuine_1, img_incr, triangles_indexes)
         except IndexError:
             continue
-        angles_descriptors.extend([angles_1_14, angles_barrel, angles_pincushion, angles_decr, angles_incr])
-        mean_area_descriptors.extend(
-            [mean_area_1_14, mean_area_barrel, mean_area_pincushion, mean_area_decr, mean_area_incr])
+        angles_descriptors.extend([angles_1_14, angles_1_up1, angles_1_up2, angles_1_up3,
+                                   angles_barrel, angles_pincushion, angles_decr, angles_incr])
+        mean_area_descriptors.extend([mean_area_1_14, mean_area_1_up1, mean_area_1_up2, mean_area_1_up3,
+                                      mean_area_barrel, mean_area_pincushion, mean_area_decr, mean_area_incr])
         matrices_descriptors.extend(
-            [affine_matrices_1_14, affine_matrices_barrel, affine_matrices_pincushion, affine_matrices_decr,
-             affine_matrices_incr])
-        labels.extend([0, 1, 1, 1, 1])
+            [affine_matrices_1_14, affine_matrices_1_up1, affine_matrices_1_up2, affine_matrices_1_up3,
+             affine_matrices_barrel, affine_matrices_pincushion, affine_matrices_decr, affine_matrices_incr])
+        labels.extend([1, 1, 1, 1, 0, 0, 0, 0])
 
     angles_descriptors = np.array(angles_descriptors).astype('float32')
     mean_area_descriptors = np.array(mean_area_descriptors).astype('float32')
@@ -131,7 +142,7 @@ def compute_altered_descriptors_beauty(dataset_path, images_to_load=None) -> Tup
         lbp_descriptors.extend([lbp_features1_14, lbp_features1_a, lbp_features1_b, lbp_features1_c])
 
         # Setting labels
-        labels.extend([0, 1, 1, 1])
+        labels.extend([1, 0, 0, 0])
 
     lbp_descriptors = np.array(lbp_descriptors).astype('float32')
     # Convert labels

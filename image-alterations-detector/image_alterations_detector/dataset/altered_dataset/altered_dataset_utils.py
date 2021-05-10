@@ -1,8 +1,21 @@
 import os
 from typing import Tuple, List
 
+import albumentations as a
 import cv2
 import numpy as np
+
+transform = a.Compose([
+    a.JpegCompression(quality_lower=39, quality_upper=40, p=0.4),
+    a.MultiplicativeNoise(multiplier=(0.5, 1.5), per_channel=True, p=0.2),
+    a.RandomBrightnessContrast(p=0.3),
+])
+
+
+def augment(img: np.ndarray):
+    transformed = transform(image=img)
+    transformed_image = transformed["image"]
+    return transformed_image
 
 
 def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tuple[List[np.ndarray], List[np.ndarray]],
@@ -47,7 +60,7 @@ def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tup
 
 
 def load_altered_dataset_distortion(path_to_dataset, images_to_load=60) -> Tuple[
-    Tuple[List[np.ndarray], List[np.ndarray]],
+    Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray], List[np.ndarray], List[np.ndarray]],
     Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray], List[np.ndarray]]]:
     # Face operations
     def exists(path):
@@ -66,6 +79,9 @@ def load_altered_dataset_distortion(path_to_dataset, images_to_load=60) -> Tuple
 
     genuine_1 = []
     genuine_14 = []
+    genuine_up_sample1 = []
+    genuine_up_sample2 = []
+    genuine_up_sample3 = []
     barrel = []
     pincushion = []
     decr = []
@@ -80,17 +96,23 @@ def load_altered_dataset_distortion(path_to_dataset, images_to_load=60) -> Tuple
             image_decr_path = os.path.join(altered_decr_dir, '{}-{}-14.png'.format(gender, number))
             image_incr_path = os.path.join(altered_incr_dir, '{}-{}-14.png'.format(gender, number))
             if exists(image_1_path) and exists(image_14_path):
+                image_14 = load_image(image_14_path)
                 genuine_1.append(load_image(image_1_path))
-                genuine_14.append(load_image(image_14_path))
+                genuine_14.append(image_14)
+                genuine_up_sample1.append(augment(image_14))
+                genuine_up_sample2.append(augment(image_14))
+                genuine_up_sample3.append(augment(image_14))
                 barrel.append(load_image(image_barrel_path))
                 pincushion.append(load_image(image_pincushion_path))
                 decr.append(load_image(image_decr_path))
                 incr.append(load_image(image_incr_path))
 
-    # images_to_show = [genuine_1[0], genuine_14[0], barrel[0], pincushion[0], decr[0], incr[0]]
-    # mosaic = get_images_mosaic_no_labels('Dataset', images_to_show, 2, 3)
+    # images_to_show = [genuine_1[0], genuine_14[0], genuine_up_sample1[0], genuine_up_sample2[0], genuine_up_sample3[0],
+    #                   barrel[0], pincushion[0], decr[0], incr[0]]
+    # mosaic = get_images_mosaic_no_labels('Dataset', images_to_show, 3, 3)
     # mosaic.show()
-    return (genuine_1, genuine_14), (barrel, pincushion, decr, incr)
+    return (genuine_1, genuine_14, genuine_up_sample1, genuine_up_sample2, genuine_up_sample3), (
+        barrel, pincushion, decr, incr)
 
 
 if __name__ == '__main__':
