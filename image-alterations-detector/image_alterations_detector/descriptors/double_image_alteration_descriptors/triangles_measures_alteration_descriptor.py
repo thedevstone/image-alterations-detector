@@ -1,13 +1,11 @@
-from math import sqrt
-
 import numpy as np
 
 from image_alterations_detector.descriptors.triangle_descriptors.triangle_descriptors import compute_triangle_area, \
-    compute_triangle_centroid, compute_triangle_angles
+    compute_triangle_side_centroid_distances, compute_triangle_angles
 
 
-def compute_mean_triangles_area_differences_descriptor(source_triangles_points: np.ndarray,
-                                                       dest_triangles_points: np.ndarray) -> np.ndarray:
+def compute_triangles_area_differences_descriptor(source_triangles_points: np.ndarray,
+                                                  dest_triangles_points: np.ndarray) -> np.ndarray:
     """ Compute the mean of all absolute differences between all pairs of areas (a1, a2) of
         corresponding triangles in source and destination image Delaunay triangulation
 
@@ -27,8 +25,8 @@ def compute_mean_triangles_area_differences_descriptor(source_triangles_points: 
     return np.array(area_differences)
 
 
-def compute_mean_triangles_centroids_distances_descriptor(source_triangles_points: np.ndarray,
-                                                          dest_triangles_points: np.ndarray):
+def compute_triangles_centroids_distances_descriptor(source_triangles_points: np.ndarray,
+                                                     dest_triangles_points: np.ndarray):
     """ Compute the mean of all distances between all pairs of centroids ((c1_x, c1_y), (c2_x, c2_y)) of
         corresponding triangles in source and destination image Delaunay triangulation
 
@@ -42,15 +40,15 @@ def compute_mean_triangles_centroids_distances_descriptor(source_triangles_point
     if source_triangle_number != dest_triangle_number:
         raise AssertionError('Images have different number of triangles')
     for t1, t2 in zip(source_triangles_points, dest_triangles_points):
-        (c1_x, c1_y) = compute_triangle_centroid(t1)
-        (c2_x, c2_y) = compute_triangle_centroid(t2)
-        dist = sqrt((c2_x - c1_x) ** 2 + (c2_y - c1_y) ** 2)
-        centroid_distances.append(dist)
-    return np.array(centroid_distances)
+        dist_centroid1_to_sides = compute_triangle_side_centroid_distances(t1)
+        dist_centroid2_to_sides = compute_triangle_side_centroid_distances(t2)
+        absolute_difference = abs(dist_centroid1_to_sides - dist_centroid2_to_sides)
+        centroid_distances.append(absolute_difference)
+    return np.array(centroid_distances).flatten()
 
 
-def compute_mean_triangles_angles_distances_descriptor(source_triangles_points: np.ndarray,
-                                                       dest_triangles_points: np.ndarray):
+def compute_triangles_angles_distances_descriptor(source_triangles_points: np.ndarray,
+                                                  dest_triangles_points: np.ndarray):
     """ Compute the mean of all cosine distance between all pairs of angles (a1, b1, c1) (a2, b2, c2) of
         corresponding triangles in source and destination image Delaunay triangulation
 

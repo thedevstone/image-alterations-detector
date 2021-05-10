@@ -9,7 +9,8 @@ from image_alterations_detector.descriptors.double_image_alteration_descriptors.
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.texture_alteration_descriptor import \
     compute_face_lbp_difference
 from image_alterations_detector.descriptors.double_image_alteration_descriptors.triangles_measures_alteration_descriptor import \
-    compute_mean_triangles_area_differences_descriptor, compute_mean_triangles_angles_distances_descriptor
+    compute_triangles_area_differences_descriptor, compute_triangles_angles_distances_descriptor, \
+    compute_triangles_centroids_distances_descriptor
 from image_alterations_detector.descriptors.texture_descriptors.local_binary_pattern import LocalBinaryPattern
 from image_alterations_detector.face_morphology.face_detection.face_detector import FaceDetector
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import \
@@ -18,6 +19,8 @@ from image_alterations_detector.face_morphology.landmarks_triangulation.manage_t
 from image_alterations_detector.face_transform.face_alignment.face_aligner import FaceAligner
 
 ANGLES_DIM = 339
+MEAN_AREAS_DIM = 113
+CENTROIDS_DIM = 339
 AFFINE_MATRICES_DIM = 678
 LBP_DIM = 52
 
@@ -39,7 +42,7 @@ def compute_two_image_descriptors_beauty(source_image, dest_image) -> np.ndarray
 
 
 def compute_two_image_descriptors_distortion(source_image, dest_image, triangles_indexes) -> \
-        Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # Align
     source_image, source_image_landmarks = aligner.align(source_image)
     dest_image, dest_image_landmarks = aligner.align(dest_image)
@@ -47,21 +50,23 @@ def compute_two_image_descriptors_distortion(source_image, dest_image, triangles
     source_image_landmarks = triangulation_indexes_to_points(source_image_landmarks, triangles_indexes)
     dest_image_landmarks = triangulation_indexes_to_points(dest_image_landmarks, triangles_indexes)  # repeated
     # Descriptors
-    angles = compute_mean_triangles_angles_distances_descriptor(source_image_landmarks, dest_image_landmarks)
-    mean_area = compute_mean_triangles_area_differences_descriptor(source_image_landmarks, dest_image_landmarks)
+    angles = compute_triangles_angles_distances_descriptor(source_image_landmarks, dest_image_landmarks)
+    mean_area = compute_triangles_area_differences_descriptor(source_image_landmarks, dest_image_landmarks)
+    centroids = compute_triangles_centroids_distances_descriptor(source_image_landmarks, dest_image_landmarks)
     affine_matrices = compute_affine_matrices_descriptor(source_image_landmarks, dest_image_landmarks)
     # Convert to float
     angles = np.array(angles).astype('float32')
     mean_area = np.array(mean_area).astype('float32')
     affine_matrices = np.array(affine_matrices).astype('float32')
-    return angles, mean_area, affine_matrices
+    return angles, mean_area, centroids, affine_matrices
 
 
 def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) -> \
-        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     # Descriptors
     angles_descriptors = []
     mean_area_descriptors = []
+    centroid_descriptors = []
     matrices_descriptors = []
     labels = []
     # Load the dataset
@@ -82,22 +87,22 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
         img_incr = incr[idx]
         # Align face
         try:
-            angles_1_14, mean_area_1_14, affine_matrices_1_14 = compute_two_image_descriptors_distortion(
+            angles_1_14, mean_area_1_14, centroid_1_14, affine_matrices_1_14 = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_genuine_14, triangles_indexes)
-            angles_1_up1, mean_area_1_up1, affine_matrices_1_up1 = compute_two_image_descriptors_distortion(
+            angles_1_up1, mean_area_1_up1, centroid_1_up1, affine_matrices_1_up1 = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_up1, triangles_indexes)
-            angles_1_up2, mean_area_1_up2, affine_matrices_1_up2 = compute_two_image_descriptors_distortion(
+            angles_1_up2, mean_area_1_up2, centroid_1_up2, affine_matrices_1_up2 = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_up2, triangles_indexes)
-            angles_1_up3, mean_area_1_up3, affine_matrices_1_up3 = compute_two_image_descriptors_distortion(
+            angles_1_up3, mean_area_1_up3, centroid_1_up3, affine_matrices_1_up3 = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_up3, triangles_indexes)
 
-            angles_barrel, mean_area_barrel, affine_matrices_barrel = compute_two_image_descriptors_distortion(
+            angles_barrel, mean_area_barrel, centroid_barrel, affine_matrices_barrel = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_barrel, triangles_indexes)
-            angles_pincushion, mean_area_pincushion, affine_matrices_pincushion = compute_two_image_descriptors_distortion(
+            angles_pincushion, mean_area_pincushion, centroid_pincushion, affine_matrices_pincushion = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_pincushion, triangles_indexes)
-            angles_decr, mean_area_decr, affine_matrices_decr = compute_two_image_descriptors_distortion(
+            angles_decr, mean_area_decr, centroid_decr, affine_matrices_decr = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_decr, triangles_indexes)
-            angles_incr, mean_area_incr, affine_matrices_incr = compute_two_image_descriptors_distortion(
+            angles_incr, mean_area_incr, centroid_incr, affine_matrices_incr = compute_two_image_descriptors_distortion(
                 img_genuine_1, img_incr, triangles_indexes)
         except IndexError:
             continue
@@ -105,6 +110,8 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
                                    angles_barrel, angles_pincushion, angles_decr, angles_incr])
         mean_area_descriptors.extend([mean_area_1_14, mean_area_1_up1, mean_area_1_up2, mean_area_1_up3,
                                       mean_area_barrel, mean_area_pincushion, mean_area_decr, mean_area_incr])
+        centroid_descriptors.extend([centroid_1_14, centroid_1_up1, centroid_1_up2, centroid_1_up3,
+                                     centroid_barrel, centroid_pincushion, centroid_decr, centroid_incr])
         matrices_descriptors.extend(
             [affine_matrices_1_14, affine_matrices_1_up1, affine_matrices_1_up2, affine_matrices_1_up3,
              affine_matrices_barrel, affine_matrices_pincushion, affine_matrices_decr, affine_matrices_incr])
@@ -112,10 +119,11 @@ def compute_altered_descriptors_distortion(dataset_path, images_to_load=None) ->
 
     angles_descriptors = np.array(angles_descriptors).astype('float32')
     mean_area_descriptors = np.array(mean_area_descriptors).astype('float32')
+    centroid_descriptors = np.array(centroid_descriptors).astype('float32')
     matrices_descriptors = np.array(matrices_descriptors).astype('float32')
     # Convert labels
     labels = np.array(labels)
-    return angles_descriptors, mean_area_descriptors, matrices_descriptors, labels
+    return angles_descriptors, mean_area_descriptors, centroid_descriptors, matrices_descriptors, labels
 
 
 def compute_altered_descriptors_beauty(dataset_path, images_to_load=None) -> Tuple[np.ndarray, np.ndarray]:

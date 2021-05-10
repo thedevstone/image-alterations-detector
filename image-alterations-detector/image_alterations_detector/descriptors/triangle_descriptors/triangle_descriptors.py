@@ -1,9 +1,9 @@
 import math
 from math import sqrt
-from typing import Tuple
 
 import cv2
 import numpy as np
+from numpy.linalg import norm
 
 from image_alterations_detector.face_morphology.landmarks_triangulation.conversions import unpack_triangle_coordinates
 
@@ -27,16 +27,27 @@ def compute_triangle_area(triangle_points: np.ndarray) -> float:
     return area
 
 
-def compute_triangle_centroid(triangle_points: np.ndarray) -> Tuple[float, float]:
+def compute_triangle_side_centroid_distances(triangle_points: np.ndarray) -> np.ndarray:
     """ Compute centroid of a triangle given 3 points
 
     :param triangle_points: a numpy array of points
     :return: the centroid
     """
+
+    def distance_point_line(point, p1, p2):
+        norm_p2_p1 = norm(p2 - p1)
+        norm_p2_p1 = norm_p2_p1 if norm(p2 - p1) != 0 else np.finfo(float).eps
+        d = np.abs(norm(np.cross(p2 - p1, p1 - point))) / norm_p2_p1
+        return d
+
     (x1, y1), (x2, y2), (x3, y3) = unpack_triangle_coordinates(triangle_points)
     # Centroid
     centroid = (((x1 + x2 + x3) / 3), ((y1 + y2 + y3) / 3))
-    return centroid
+    relative_centroid_1_2 = distance_point_line(np.array(centroid), np.array([x1, y1]), np.array([x2, y2]))
+    relative_centroid_2_3 = distance_point_line(np.array(centroid), np.array([x2, y2]), np.array([x3, y3]))
+    relative_centroid_3_1 = distance_point_line(np.array(centroid), np.array([x3, y3]), np.array([x1, y1]))
+    centroid_distances_to_sides = np.array([relative_centroid_1_2, relative_centroid_2_3, relative_centroid_3_1])
+    return centroid_distances_to_sides
 
 
 def compute_triangle_angles(triangle_points: np.ndarray) -> np.ndarray:
@@ -75,3 +86,8 @@ def compute_triangle_affine_matrix(source_triangle_points: np.ndarray, dest_tria
     pts_dest = np.float32([pt1_dest, pt2_dest, pt3_dest])
     warping_matrix = cv2.getAffineTransform(pts_source, pts_dest)
     return warping_matrix
+
+
+if __name__ == '__main__':
+    dist = compute_triangle_side_centroid_distances(np.array([0, -4 / 3, 2, 0, 5, 6]))
+    print(dist)
