@@ -28,10 +28,10 @@ def train_altered_descriptors_beauty():
     x_test_lbp_descriptors = lbp_scaler.transform(x_test_lbp_descriptors)
     # Train on lbp
     multi_clf_lbp = MlpSvmRf('lbp')
-    multi_clf_lbp.create_model(rf_max_depth=13, svm_c=100, svm_gamma=0.001, svm_kernel='rbf',
+    multi_clf_lbp.create_model(rf_max_depth=7, svm_c=1000, svm_gamma=0.001, svm_kernel='rbf',
                                input_shape_length=LBP_DIM, layer1=50, layer2=10, activation='tanh', dropout=0.2)
     multi_clf_lbp.fit(x_train_lbp_descriptors, y_train_lbp_descriptors,
-                      class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=False)
+                      class_weight={0: class_weight[0], 1: class_weight[1]}, grid_search=True)
     # Evaluate and save
     multi_clf_lbp.evaluate(x_test_lbp_descriptors, y_test_lbp_descriptors)
     multi_clf_lbp.save_models()
