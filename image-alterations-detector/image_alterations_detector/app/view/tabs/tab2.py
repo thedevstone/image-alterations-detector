@@ -5,6 +5,8 @@ from tkinter import StringVar
 from tkinter.ttk import Notebook
 from typing import Optional
 
+import numpy as np
+
 from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_resize_with_border
 from image_alterations_detector.app.utils.layout_utils import set_img_label_layout, create_text_label, \
     create_text_label_var
@@ -52,21 +54,24 @@ class Tab2:
         create_text_label(self.result_panel, 'Triangles areas change:', 25, 1, 0, 'nw')
         create_text_label(self.result_panel, 'Triangles centroids change:', 25, 2, 0, 'nw')
         create_text_label(self.result_panel, 'Triangles affine transformation:', 25, 3, 0, 'nw')
-        create_text_label(self.result_panel, 'Texture change:', 25, 4, 0, 'nw')
+        create_text_label(self.result_panel, 'Distorted:', 35, 4, 0, 'nw')
+        create_text_label(self.result_panel, 'Beautified:', 35, 5, 0, 'nw')
         # Vars
         self.angles_var = StringVar()
         self.areas_var = StringVar()
         self.centroids_var = StringVar()
         self.matrices_var = StringVar()
+        self.distorted_var = StringVar()
         self.texture_var = StringVar()
         create_text_label_var(self.result_panel, self.angles_var, 25, 0, 1, 'nw')
         create_text_label_var(self.result_panel, self.areas_var, 25, 1, 1, 'nw')
         create_text_label_var(self.result_panel, self.centroids_var, 25, 2, 1, 'nw')
         create_text_label_var(self.result_panel, self.matrices_var, 25, 3, 1, 'nw')
-        create_text_label_var(self.result_panel, self.texture_var, 25, 4, 1, 'nw')
+        create_text_label_var(self.result_panel, self.distorted_var, 35, 4, 1, 'nw')
+        create_text_label_var(self.result_panel, self.texture_var, 35, 5, 1, 'nw')
 
     def set_triangulation_images(self, img1, img2):
-        size = int(self.tab_root.winfo_height() - 150)
+        size = int(self.tab_root.winfo_height() - 200)
         img1 = convert_to_tk_image(image_resize_with_border(img1, size)[0])
         img2 = convert_to_tk_image(image_resize_with_border(img2, size)[0])
         set_img_label_layout(self.image1_label, img1, 0, 0, 'w')
@@ -74,8 +79,15 @@ class Tab2:
 
     def show_result(self, results):
         angles_result, areas_result, centroids_result, affine_matrices_result, lbp_result = results
-        self.angles_var.set('{}%'.format(mean_weight(angles_result)))
-        self.areas_var.set('{}%'.format(mean_weight(areas_result)))
-        self.centroids_var.set('{}%'.format(mean_weight(centroids_result)))
-        self.matrices_var.set('{}%'.format(mean_weight(affine_matrices_result)))
+        angles_result = mean_weight(angles_result)
+        areas_result = mean_weight(areas_result)
+        centroids_result = mean_weight(centroids_result)
+        affine_matrices_result = mean_weight(affine_matrices_result)
+        mean_distortion = np.array([angles_result, areas_result, centroids_result, affine_matrices_result]).mean()
+        mean_distortion = round(mean_distortion, 2)
+        self.angles_var.set('{}%'.format(angles_result))
+        self.areas_var.set('{}%'.format(areas_result))
+        self.centroids_var.set('{}%'.format(centroids_result))
+        self.matrices_var.set('{}%'.format(affine_matrices_result))
+        self.distorted_var.set('{}%'.format(mean_distortion))
         self.texture_var.set('{}%'.format(mean_weight(lbp_result)))
