@@ -18,9 +18,9 @@ def augment(img: np.ndarray):
     return transformed_image
 
 
-def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tuple[List[np.ndarray], List[np.ndarray]],
-                                                                             Tuple[List[np.ndarray], List[np.ndarray],
-                                                                                   List[np.ndarray]]]:
+def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[
+    Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray], List[np.ndarray]],
+    Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]]:
     # Face operations
     def exists(path):
         return os.path.exists(path)
@@ -35,6 +35,8 @@ def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tup
 
     genuine_1 = []
     genuine_14 = []
+    genuine_up_sample1 = []
+    genuine_up_sample2 = []
     beauty_a = []
     beauty_b = []
     beauty_c = []
@@ -47,8 +49,11 @@ def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tup
             image_beauty_b_path = os.path.join(beautified_dir, 'b', '{}-{}-b.jpg'.format(gender, number))
             image_beauty_c_path = os.path.join(beautified_dir, 'c', '{}-{}-c.jpg'.format(gender, number))
             if exists(image_1_path) and exists(image_14_path):
+                image_14 = load_image(image_14_path)
                 genuine_1.append(load_image(image_1_path))
-                genuine_14.append(load_image(image_14_path))
+                genuine_14.append(image_14)
+                genuine_up_sample1.append(augment(image_14))
+                genuine_up_sample2.append(augment(image_14))
                 beauty_a.append(load_image(image_beauty_a_path))
                 beauty_b.append(load_image(image_beauty_b_path))
                 beauty_c.append(load_image(image_beauty_c_path))
@@ -56,7 +61,7 @@ def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[Tup
     # images_to_show = [genuine_1[0], genuine_5[0], genuine_14[0], beauty_a[0], beauty_b[0], beauty_c[0]]
     # mosaic = get_images_mosaic_no_labels('Dataset', images_to_show, 2, 3)
     # mosaic.show()
-    return (genuine_1, genuine_14), (beauty_a, beauty_b, beauty_c)
+    return (genuine_1, genuine_14, genuine_up_sample1, genuine_up_sample2), (beauty_a, beauty_b, beauty_c)
 
 
 def load_altered_dataset_distortion(path_to_dataset, images_to_load=60) -> Tuple[

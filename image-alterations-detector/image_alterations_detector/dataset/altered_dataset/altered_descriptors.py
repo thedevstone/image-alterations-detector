@@ -132,25 +132,30 @@ def compute_altered_descriptors_beauty(dataset_path, images_to_load=None) -> Tup
     labels = []
     # Load the dataset
     genuine, altered = load_altered_dataset_beauty(dataset_path, images_to_load)
-    genuine_1, genuine_14 = genuine
+    genuine_1, genuine_14, genuine_up_sample1, genuine_up_sample2 = genuine
     beauty_a, beauty_b, beauty_c = altered
     for idx in range(0, images_to_load):
         img_genuine_1, landmarks_1 = aligner.align(genuine_1[idx])
         img_genuine_14, landmarks_14 = aligner.align(genuine_14[idx])
+        img_up1, landmarks_up1 = aligner.align(genuine_up_sample1[idx])
+        img_up2, landmarks_up2 = aligner.align(genuine_up_sample2[idx])
         img_beauty_a, landmarks_a = aligner.align(beauty_a[idx])
         img_beauty_b, landmarks_b = aligner.align(beauty_b[idx])
         img_beauty_c, landmarks_c = aligner.align(beauty_c[idx])
 
         # LBP
         lbp_features1_14 = compute_face_lbp_difference(img_genuine_1, img_genuine_14, detector, lbp)
+        lbp_features1_up1 = compute_face_lbp_difference(img_genuine_1, img_up1, detector, lbp)
+        lbp_features1_up2 = compute_face_lbp_difference(img_genuine_1, img_up2, detector, lbp)
         lbp_features1_a = compute_face_lbp_difference(img_genuine_1, img_beauty_a, detector, lbp)
         lbp_features1_b = compute_face_lbp_difference(img_genuine_1, img_beauty_b, detector, lbp)
         lbp_features1_c = compute_face_lbp_difference(img_genuine_1, img_beauty_c, detector, lbp)
 
-        lbp_descriptors.extend([lbp_features1_14, lbp_features1_a, lbp_features1_b, lbp_features1_c])
+        lbp_descriptors.extend(
+            [lbp_features1_14, lbp_features1_up1, lbp_features1_up2, lbp_features1_a, lbp_features1_b, lbp_features1_c])
 
         # Setting labels
-        labels.extend([1, 0, 0, 0])
+        labels.extend([1, 1, 1, 0, 0, 0])
 
     lbp_descriptors = np.array(lbp_descriptors).astype('float32')
     # Convert labels

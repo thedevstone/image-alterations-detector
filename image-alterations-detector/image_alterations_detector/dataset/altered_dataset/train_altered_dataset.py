@@ -14,7 +14,7 @@ from image_alterations_detector.file_system.path_utilities import get_folder_pat
 
 def train_altered_descriptors_beauty():
     dataset_path = '/Users/luca/Desktop/altered'
-    lbp_descriptors, labels = compute_altered_descriptors_beauty(dataset_path, 10)
+    lbp_descriptors, labels = compute_altered_descriptors_beauty(dataset_path, 60)
     # Class weights
     class_weight = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
     print("Class weights:", class_weight)
@@ -41,7 +41,7 @@ def train_altered_descriptors_beauty():
 def train_altered_descriptors_distortion():
     dataset_path = '/Users/luca/Desktop/altered'
     angles_descriptors, mean_area_descriptors, centroid_descriptors, matrices_descriptors, labels = \
-        compute_altered_descriptors_distortion(dataset_path, 5)
+        compute_altered_descriptors_distortion(dataset_path, 60)
 
     # Class weights
     class_weight = compute_class_weight('balanced', classes=np.unique(labels), y=labels)
@@ -131,5 +131,5 @@ def train_altered_descriptors_distortion():
 
 
 if __name__ == '__main__':
-    train_altered_descriptors_distortion()
-    # train_altered_descriptors_beauty()
+    # train_altered_descriptors_distortion()
+    train_altered_descriptors_beauty()
