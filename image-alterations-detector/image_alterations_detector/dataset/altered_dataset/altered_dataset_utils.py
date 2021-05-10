@@ -5,15 +5,25 @@ import albumentations as a
 import cv2
 import numpy as np
 
-transform = a.Compose([
+transform_distort = a.Compose([
     a.JpegCompression(quality_lower=39, quality_upper=40, p=0.4),
     a.MultiplicativeNoise(multiplier=(0.5, 1.5), per_channel=True, p=0.2),
     a.RandomBrightnessContrast(p=0.3),
 ])
 
+transform_beauty = a.Compose([
+    a.RandomBrightness(p=0.5),
+])
 
-def augment(img: np.ndarray):
-    transformed = transform(image=img)
+
+def augment_distort(img: np.ndarray):
+    transformed = transform_distort(image=img)
+    transformed_image = transformed["image"]
+    return transformed_image
+
+
+def augment_beauty(img: np.ndarray):
+    transformed = transform_beauty(image=img)
     transformed_image = transformed["image"]
     return transformed_image
 
@@ -52,8 +62,8 @@ def load_altered_dataset_beauty(path_to_dataset, images_to_load=60) -> Tuple[
                 image_14 = load_image(image_14_path)
                 genuine_1.append(load_image(image_1_path))
                 genuine_14.append(image_14)
-                genuine_up_sample1.append(augment(image_14))
-                genuine_up_sample2.append(augment(image_14))
+                genuine_up_sample1.append(augment_beauty(image_14))
+                genuine_up_sample2.append(augment_beauty(image_14))
                 beauty_a.append(load_image(image_beauty_a_path))
                 beauty_b.append(load_image(image_beauty_b_path))
                 beauty_c.append(load_image(image_beauty_c_path))
@@ -104,9 +114,9 @@ def load_altered_dataset_distortion(path_to_dataset, images_to_load=60) -> Tuple
                 image_14 = load_image(image_14_path)
                 genuine_1.append(load_image(image_1_path))
                 genuine_14.append(image_14)
-                genuine_up_sample1.append(augment(image_14))
-                genuine_up_sample2.append(augment(image_14))
-                genuine_up_sample3.append(augment(image_14))
+                genuine_up_sample1.append(augment_distort(image_14))
+                genuine_up_sample2.append(augment_distort(image_14))
+                genuine_up_sample3.append(augment_distort(image_14))
                 barrel.append(load_image(image_barrel_path))
                 pincushion.append(load_image(image_pincushion_path))
                 decr.append(load_image(image_decr_path))
