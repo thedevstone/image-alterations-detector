@@ -125,6 +125,8 @@ def train_altered_descriptors_distortion():
 
     # Save scalers
     joblib.dump(angles_scaler, os.path.join(get_folder_path_from_root('models'), 'angles_scaler.pkl'))
+    joblib.dump(areas_scaler, os.path.join(get_folder_path_from_root('models'), 'areas_scaler.pkl'))
+    joblib.dump(centroids_scaler, os.path.join(get_folder_path_from_root('models'), 'centroids_scaler.pkl'))
     joblib.dump(matrices_scaler, os.path.join(get_folder_path_from_root('models'), 'matrices_scaler.pkl'))
 
 
