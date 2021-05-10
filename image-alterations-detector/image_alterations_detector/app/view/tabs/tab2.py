@@ -48,16 +48,22 @@ class Tab2:
         self.result_panel.columnconfigure(0, weight=1)
         self.result_panel.columnconfigure(1, weight=1)
 
-        create_text_label(self.result_panel, 'Triangles transformation:', 25, 0, 0, 'nw')
-        create_text_label(self.result_panel, 'Angles change:', 25, 1, 0, 'nw')
-        create_text_label(self.result_panel, 'Texture change:', 25, 2, 0, 'nw')
+        create_text_label(self.result_panel, 'Triangles angles change:', 25, 0, 0, 'nw')
+        create_text_label(self.result_panel, 'Triangles areas change:', 25, 1, 0, 'nw')
+        create_text_label(self.result_panel, 'Triangles centroids change:', 25, 2, 0, 'nw')
+        create_text_label(self.result_panel, 'Triangles affine transformation:', 25, 3, 0, 'nw')
+        create_text_label(self.result_panel, 'Texture change:', 25, 4, 0, 'nw')
         # Vars
-        self.matrices_var = StringVar()
         self.angles_var = StringVar()
+        self.areas_var = StringVar()
+        self.centroids_var = StringVar()
+        self.matrices_var = StringVar()
         self.texture_var = StringVar()
-        create_text_label_var(self.result_panel, self.matrices_var, 25, 0, 1, 'nw')
-        create_text_label_var(self.result_panel, self.angles_var, 25, 1, 1, 'nw')
-        create_text_label_var(self.result_panel, self.texture_var, 25, 2, 1, 'nw')
+        create_text_label_var(self.result_panel, self.angles_var, 25, 0, 1, 'nw')
+        create_text_label_var(self.result_panel, self.areas_var, 25, 1, 1, 'nw')
+        create_text_label_var(self.result_panel, self.centroids_var, 25, 2, 1, 'nw')
+        create_text_label_var(self.result_panel, self.matrices_var, 25, 3, 1, 'nw')
+        create_text_label_var(self.result_panel, self.texture_var, 25, 4, 1, 'nw')
 
     def set_triangulation_images(self, img1, img2):
         size = int(self.tab_root.winfo_height() - 150)
@@ -67,7 +73,9 @@ class Tab2:
         set_img_label_layout(self.image2_label, img2, 0, 1, 'e')
 
     def show_result(self, results):
-        angles_result, affine_matrices_result, lbp_result = results
+        angles_result, areas_result, centroids_result, affine_matrices_result, lbp_result = results
         self.angles_var.set('{}%'.format(mean_weight(angles_result)))
+        self.areas_var.set('{}%'.format(mean_weight(areas_result)))
+        self.centroids_var.set('{}%'.format(mean_weight(centroids_result)))
         self.matrices_var.set('{}%'.format(mean_weight(affine_matrices_result)))
         self.texture_var.set('{}%'.format(mean_weight(lbp_result)))

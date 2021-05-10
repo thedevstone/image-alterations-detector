@@ -22,8 +22,8 @@ class MlpSvmRf:
         self.mlp.evaluate(x_test, y_test)
 
     def predict_one(self, x_test):
-        svm_rf_predicted = self.svm_rf.predict(x_test)[0][1]
-        mlp_predicted = self.mlp.predict(x_test)[0][0]
+        svm_rf_predicted = 1 - self.svm_rf.predict(x_test)[0][1]
+        mlp_predicted = 1 - self.mlp.predict(x_test)[0][0]
         return self.feature_name, round(svm_rf_predicted, 2), round(mlp_predicted, 2)
 
     def save_models(self):

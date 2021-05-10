@@ -51,6 +51,6 @@ def mean_weight(result_tuple, svm_rm_weight=1.2, mlp_weight=1.0):
     svm_rf = result_tuple[1] * svm_rm_weight
     mlp = result_tuple[2] * mlp_weight
     result = (svm_rf + mlp) / (svm_rm_weight + mlp_weight)
-    result = round(result, 2)
     result *= 100.0
+    result = round(result, 2)
     return result
