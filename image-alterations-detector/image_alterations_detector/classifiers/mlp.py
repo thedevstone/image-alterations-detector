@@ -1,12 +1,13 @@
 import os
 
-from keras import models
+import tensorflow as tf
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix, ConfusionMatrixDisplay, recall_score, \
     PrecisionRecallDisplay, precision_recall_curve, roc_curve, RocCurveDisplay
+from tensorflow.keras import models
 from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization
-import tensorflow as tf
+
 from image_alterations_detector.file_system.path_utilities import get_folder_path_from_root, get_model_path
 
 tf.get_logger().setLevel('ERROR')
