@@ -7,7 +7,8 @@ from typing import Optional
 
 import numpy as np
 
-from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_resize_with_border
+from image_alterations_detector.app.utils.conversion import convert_to_tk_image, mean_weight, image_resize_with_border, \
+    weighted_majority_mean
 from image_alterations_detector.app.utils.layout_utils import set_img_label_layout, create_text_label, \
     create_text_label_var
 
@@ -83,8 +84,9 @@ class Tab2:
         areas_result = mean_weight(areas_result)
         centroids_result = mean_weight(centroids_result)
         affine_matrices_result = mean_weight(affine_matrices_result)
-        mean_distortion = np.array([angles_result, areas_result, centroids_result, affine_matrices_result]).mean()
-        mean_distortion = round(mean_distortion, 2)
+        rounded_results = np.array([angles_result, areas_result, centroids_result, affine_matrices_result])
+        mean_distortion = weighted_majority_mean(rounded_results)
+
         self.angles_var.set('{}%'.format(angles_result))
         self.areas_var.set('{}%'.format(areas_result))
         self.centroids_var.set('{}%'.format(centroids_result))

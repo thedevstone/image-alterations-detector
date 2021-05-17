@@ -54,3 +54,21 @@ def mean_weight(result_tuple, svm_rm_weight=1.2, mlp_weight=1.0):
     result *= 100.0
     result = round(result, 2)
     return result
+
+
+def weighted_majority_mean(results):
+    majority = np.where(results >= 50.0)
+    weight_majority = len(majority[0])
+    minority = np.where(results < 50.0)
+    weight_minority = len(minority[0])
+    majority_mean = results[majority[0]].mean() if len(majority[0] > 0) else 0
+    minority_mean = results[minority[0]].mean() if len(minority[0] > 0) else 0
+    final_estimate = (majority_mean * weight_majority + minority_mean * weight_minority) / (
+            weight_majority + weight_minority)
+    final_estimate = round(final_estimate, 2)
+    return final_estimate
+
+
+if __name__ == '__main__':
+    res = weighted_majority_mean(np.array([30.0, 30.0, 40.0, 10.0]))
+    print(res)
