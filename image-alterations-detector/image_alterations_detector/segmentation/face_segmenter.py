@@ -7,9 +7,9 @@ import tensorflow as tf
 import image_alterations_detector.segmentation.configuration.color_configuration as color_conf
 import image_alterations_detector.segmentation.conversions as conversions
 from image_alterations_detector.app.utils.conversion import image_resize_with_border, image_resize_restore_ratio
-from image_alterations_detector.file_system.path_utilities import get_model_path
 from image_alterations_detector.segmentation.configuration.color_configuration import get_classes_list
 from image_alterations_detector.segmentation.configuration.keras_backend import set_keras_backend
+from image_alterations_detector.segmentation.lite_model import LiteModel
 
 CLASSES_TO_SEGMENT = {'skin': True, 'nose': True, 'eye': True, 'brow': True, 'ear': True, 'mouth': True,
                       'hair': True, 'neck': True, 'cloth': False}
@@ -18,17 +18,20 @@ CLASSES_TO_SEGMENT = {'skin': True, 'nose': True, 'eye': True, 'brow': True, 'ea
 class FaceSegmenter:
     def __init__(self):
         set_keras_backend()
-        import image_alterations_detector.segmentation.model as model
         # Configuration
         self.image_size = 256
         # Load the model
-        self.inference_model = model.load_model(get_model_path('unet.h5'))
+        # from segmentation import model
+        # self.inference_model = model.load_model(get_model_path('unet.h5'))
+        # serialize_tflite_model(self.inference_model, self.image_size)
+        self.lite_model = LiteModel('unet-256.tflite')
 
     def segment_image(self, img):
         img = cv2.resize(img, (self.image_size, self.image_size))
         img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2])).astype('float')
-        img1_normalized = img / 255.0
-        images_predicted = self.inference_model.predict(img1_normalized)
+        img1_normalized = (img / 255.0).astype('float32')
+        # images_predicted = self.inference_model.predict(img1_normalized)
+        images_predicted = self.lite_model.predict(img1_normalized)
         image_predicted = images_predicted[0]
         return image_predicted
 

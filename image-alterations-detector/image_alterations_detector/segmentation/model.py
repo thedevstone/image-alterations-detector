@@ -1,5 +1,11 @@
+import os
+
 import segmentation_models as sm
+import tensorflow
 from tensorflow import keras
+from tensorflow.python.keras.models import Model
+
+from image_alterations_detector.file_system.path_utilities import ROOT_DIR
 
 
 def load_model(model_path):
@@ -22,3 +28,14 @@ def load_model(model_path):
         }
     )
     return inference_model
+
+
+def serialize_tflite_model(model: Model, image_size):
+    # Convert the model.
+    model.input.set_shape((1, image_size, image_size, 3))
+    converter = tensorflow.lite.TFLiteConverter.from_keras_model(model)
+    converter.experimental_new_converter = True
+    converter.experimental_new_quantizer = True
+    quantized_and_pruned_tflite_model = converter.convert()
+    with open(os.path.join(ROOT_DIR, 'models', 'unet-{}.tflite'.format(image_size)), 'wb') as f:
+        f.write(quantized_and_pruned_tflite_model)

@@ -18,6 +18,7 @@ config.yaml
 *.h5
 *.pkl
 *.dat
+*.tflite
 
 # Images
 *.png
