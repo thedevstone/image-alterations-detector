@@ -70,7 +70,6 @@ def weighted_majority_mean(results):
 
 
 def weighted_mean_accuracy(results, accuracies):
-    print(results, accuracies)
     mutliply = results * accuracies
     mean = mutliply.sum() / accuracies.sum()
     return round(mean, 2)
