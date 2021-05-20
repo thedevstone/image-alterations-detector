@@ -2,7 +2,9 @@
 
 ## A simple tool for face alteration detection for eMRTD validation
 
-![emrtd](readme-images/emrtd.png)
+<h1 align="center">
+    <img src="readme-images/emrtd.png">
+</h1>
 
 ## Install python with Tkinter
 
