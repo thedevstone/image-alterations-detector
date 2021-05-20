@@ -1,4 +1,19 @@
-############################ MAC ##############################
-## Mac Osx generated files
-*.DS_Store
+# Byte-compiled / optimized / DLL file_system
+__pycache__/
+*.py[cod]
 
+# Configuration yaml
+config.yaml
+
+# Log
+*.log*
+
+# Macos
+.DS_Store
+
+# Idea
+.idea
+
+# Models
+models
+images
