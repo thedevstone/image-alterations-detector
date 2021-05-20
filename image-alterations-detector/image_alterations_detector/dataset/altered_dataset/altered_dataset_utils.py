@@ -6,13 +6,13 @@ import cv2
 import numpy as np
 
 transform_distort = a.Compose([
-    a.JpegCompression(quality_lower=39, quality_upper=40, p=0.4),
+    a.ImageCompression(quality_lower=39, quality_upper=40, p=0.4),
     a.MultiplicativeNoise(multiplier=(0.5, 1.5), per_channel=True, p=0.2),
     a.RandomBrightnessContrast(p=0.3),
 ])
 
 transform_beauty = a.Compose([
-    a.RandomBrightness(p=0.5),
+    a.RandomBrightnessContrast(p=0.3),
 ])
 
 

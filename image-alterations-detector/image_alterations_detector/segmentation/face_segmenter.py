@@ -21,9 +21,8 @@ class FaceSegmenter:
         # Configuration
         self.image_size = 256
         # Load the model
-        # from segmentation import model
+        # from image_alterations_detector.segmentation import model
         # self.inference_model = model.load_model(get_model_path('unet.h5'))
-        # serialize_tflite_model(self.inference_model, self.image_size)
         self.lite_model = LiteModel('unet-256.tflite')
 
     def segment_image(self, img):
