@@ -1,6 +1,5 @@
 import dlib
 import numpy as np
-from face_alignment import FaceAlignment, LandmarksType
 
 from image_alterations_detector.face_morphology.landmarks_prediction.conversions import landmarks_to_array
 from image_alterations_detector.file_system.path_utilities import get_model_path
@@ -15,7 +14,7 @@ class LandmarkPredictor:
         self.predictor_type = predictor_type
         self.detector = dlib.get_frontal_face_detector()
         self.predictor = dlib.shape_predictor(get_model_path('shape_predictor_68_face_landmarks.dat'))
-        self.deep_predictor = FaceAlignment(LandmarksType._2D, flip_input=False, device='cpu')
+        self.deep_predictor = None  # FaceAlignment(LandmarksType._2D, flip_input=False, device='cpu') TOO HEAVY
 
     def get_2d_landmarks(self, img: np.ndarray) -> np.ndarray:
         """

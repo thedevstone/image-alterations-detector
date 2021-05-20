@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import tkinter as tk
 from tkinter.ttk import Notebook
 from typing import Optional, List, Tuple
