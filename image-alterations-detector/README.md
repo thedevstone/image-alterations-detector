@@ -2,9 +2,7 @@
 
 ## A simple tool for face alteration detection for eMRTD validation
 
-<h1 align="center">
-    <img src="/readme-images/emrtd.png">
-</h1>
+![emrtd](readme-images/emrtd.png)
 
 ## Install python with Tkinter
 
@@ -38,13 +36,13 @@ python -m image_alterations_detector.main
 
 ### Align Images
 
-![girl](readme-images/alignment.jpg)
+![alignment](readme-images/alignment.jpg)
 
 ### Perform analysis and alteration detection
 
-![girl](readme-images/analysis.jpg)
+![analysis](readme-images/analysis.jpg)
 
 ### Segment and check IOU values
 
-![girl](readme-images/segmentation.jpg)
+![segmentation](readme-images/segmentation.jpg)
 
