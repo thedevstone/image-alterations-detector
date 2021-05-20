@@ -15,14 +15,5 @@ config.yaml
 .idea
 
 # Models
-*.h5
-*.pkl
-*.dat
-*.tflite
-
-# Images
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.bmp
+models
+images
