@@ -69,6 +69,20 @@ def weighted_majority_mean(results):
     return final_estimate
 
 
+def weighted_mean_accuracy(results, accuracies):
+    print(results, accuracies)
+    mutliply = results * accuracies
+    mean = mutliply.sum() / accuracies.sum()
+    return round(mean, 2)
+
+
 if __name__ == '__main__':
-    res = weighted_majority_mean(np.array([30.0, 30.0, 40.0, 10.0]))
+    result = np.array([30.0, 30.0, 40.0, 10.0])
+    # res = weighted_majority_mean(result)
+    # print(res)
+    acc = np.array(
+        [mean_weight(['Angles', 0.60, 0.56]), mean_weight(['Areas', 0.69, 0.70]),
+         mean_weight(['Centroids', 0.68, 0.71]),
+         mean_weight(['Matrices', 0.70, 0.67])])
+    res = weighted_mean_accuracy(result, acc)
     print(res)
